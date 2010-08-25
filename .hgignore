@@ -1,0 +1,15 @@
+syntax: glob
+*.obj
+*.exe
+*.lib
+*.dll
+*.ilk
+*.exp
+*.pdb
+*.manifest*
+vc90.idb
+BuildLog.htm
+mt.dep
+*.vcproj.*.user
+VisualStudio/*.ncb
+VisualStudio/*.suo
