@@ -1,0 +1,4 @@
+# -*- python -*-
+
+ADD_EXTRA_DIST('TCFileSync.sln') 
+ADD_EXTRA_DIST('TCFileSync.vcproj')

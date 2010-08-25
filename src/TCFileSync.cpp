@@ -1,0 +1,243 @@
+//*******************************************************************************
+//
+// *******   ***   ***               *
+//    *     *     *                  *
+//    *    *      *                *****
+//    *    *       ***  *   *   **   *    **    ***
+//    *    *          *  * *   *     *   ****  * * *
+//    *     *         *   *      *   * * *     * * *
+//    *      ***   ***    *     **   **   **   *   *
+//                        *
+//*******************************************************************************
+// see http://sourceforge.net/projects/tcsystem/ for details.
+// Copyright (C) 2003 - 2010 Thomas Goessler. All Rights Reserved. 
+//*******************************************************************************
+//
+// TCSystem is the legal property of its developers.
+// Please refer to the COPYRIGHT file distributed with this source distribution.
+// 
+// This library is free software; you can redistribute it and/or             
+// modify it under the terms of the GNU Lesser General Public                
+// License as published by the Free Software Foundation; either              
+// version 2.1 of the License, or (at your option) any later version.        
+//                                                                           
+// This library is distributed in the hope that it will be useful,           
+// but WITHOUT ANY WARRANTY; without even the implied warranty of            
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU         
+// Lesser General Public License for more details.                           
+//                                                                           
+// You should have received a copy of the GNU Lesser General Public          
+// License along with this library; if not, write to the Free Software       
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
+//*******************************************************************************
+//  $Id: TCFileSync.cpp 957 2010-01-28 23:17:00Z the_____tiger $
+//*******************************************************************************
+// CONFIX:EXENAME("TCFileSync")
+
+#include "TCFileSyncSyncronizer.h"
+#include "TCFileSyncWindow.h"
+#include "TCFileSyncVersion.h"
+#include "TCGuiApplication.h"
+#include "TCOutput.h"
+#include "TCMTLockable.h"
+#include "TCString.h"
+#include "TCSystem.h"
+
+#include "TCNewEnable.h"
+
+namespace TC
+{
+   namespace FileSync
+   {
+      static TC::StreamPtr s_out;
+
+      class MTTraceTarget: public Output::PrintTarget,
+         public MT::ObjectLevelLockable<MTTraceTarget>
+      {
+      public:
+         MTTraceTarget()
+         {
+         }
+
+         virtual void Print(const char* text)
+         {
+            Locker lock(this);
+            s_out << text << endl << flush;
+         }
+      private:
+         friend class MT::LockerPtr< MTTraceTarget* >;
+      };
+
+      class GuiApplication: public Gui::Application
+      {
+      public:
+         GuiApplication()
+            :m_settings(),
+            m_start_gui(true),
+            m_window(0)
+         {
+            s_out = Factory::CreateStdOutStream();
+
+            Output::PrintTargetPtr trace_target(new MTTraceTarget);
+            Output::SetErrorTarget(trace_target);
+            Output::SetWarningTarget(trace_target);
+            Output::SetInfoTarget(trace_target);
+            Output::SetTraceTarget(trace_target);
+
+            s_out << PROGRAM_NAME ": Version " PROGRAM_VERSION_STR << TC::endl
+               << "            This product includes: " << TCPRODUCT_STR "-" TCVERSION_STR
+               << TC::endl << TC::endl;
+
+            m_settings.info_mode     = false;
+            m_settings.calc_checksum = false;
+            m_settings.backup_folder = "_Older";
+            m_settings.num_backups   = 5;
+        }
+
+         ~GuiApplication()
+         {
+            Output::SetErrorTarget(Output::PrintTargetPtr());
+            Output::SetWarningTarget(Output::PrintTargetPtr());
+            Output::SetInfoTarget(Output::PrintTargetPtr());
+            Output::SetTraceTarget(Output::PrintTargetPtr());
+
+            s_out = StreamPtr();
+         }
+
+         virtual bool Run()
+         {
+            if (m_start_gui)
+            {
+               return Gui::Application::Run();
+            }
+
+            if (m_window)
+            {
+               m_window->hide();
+            }
+
+
+            Syncronizer syncronicer(m_settings);
+            if (!syncronicer.SetupSyncronisationData())
+            {
+               TCERROR("FileSync", "Failed setting up synchronization data");
+               return false;
+            }
+            if (!syncronicer.SyncDestination())
+            {
+               TCERROR("FileSync", "Failed syncing directories");
+               return false;
+            }
+
+            return true;
+         }
+
+      protected:
+         virtual bool ProcessArguments(const std::vector< std::string >& argv)
+         {
+            for (uint32 i=0; i<argv.size(); i++)
+            {
+               if (argv[i] == "--source" || argv[i] == "-s")
+               {
+                  m_settings.source = argv[++i];
+               }
+               else if (argv[i] == "--destination" || argv[i] == "-d")
+               {
+                  m_settings.destination = argv[++i];
+               }
+               else if (argv[i] == "--backup_folder" || argv[i] == "-b")
+               {
+                  m_settings.backup_folder = argv[++i];
+               }
+               else if (argv[i] == "--num_backups" || argv[i] == "-n")
+               {
+                  m_settings.num_backups = TC::String::ToUint32(argv[++i]);
+               }
+               else if (argv[i] == "--skipp")
+               {
+                  m_settings.folders_to_skipp.insert(argv[++i]);
+               }
+               else if (argv[i] == "--skipp_ext")
+               {
+                  m_settings.extensions_to_skipp.insert(argv[++i]);
+               }
+               else if (argv[i] == "--ext")
+               {
+                  m_settings.extensions_to_search_for.insert(argv[++i]);
+               }
+               else if (argv[i] == "--info_only" || argv[i] == "-i")
+               {
+                  m_settings.info_mode = true;
+               }
+               else if (argv[i] == "--calc_checksum" || argv[i] == "-c")
+               {
+                  m_settings.calc_checksum = true;
+               }
+               else if (argv[i] == "--no_gui")
+               {
+                  m_start_gui = false;
+               }
+               else
+               {
+                  DisplayUsage();
+                  return false;
+               }
+            }
+
+            if ((m_settings.source.empty() || m_settings.destination.empty()) && !m_start_gui)
+            {
+               DisplayUsage();
+               return false;
+            }
+
+            return true;
+
+         };
+
+         virtual std::string GetUsage()
+         {
+            return 
+            "Usage: -s or --source        for source directory\n"
+            "       -d or --destination   for destination directory\n"
+            "       -b or --backup_folder folder into which to make backups of removed or modified files\n"
+            "                             default = _Older\n"
+            "       -n or --num_backups   number of backups to keep for one file\n"
+            "                             default = 5\n"
+            "       --ext                 use only files with specified extension during synchronization, can be set more than once\n"
+            "       --skip                folder name to skip during synchronization, can be set more than once\n"
+            "       --skip_ext            skip filenames with specified extension during synchronization, can be set more than once\n";
+         }
+
+         virtual FX::FXMainWindow* CreateMainWindow()
+         {
+            m_window = new Window(this, m_settings);
+            return m_window;
+         }
+
+      private:
+         Settings m_settings;
+         bool m_start_gui;
+         Window* m_window;
+      };
+
+   }
+}
+
+int main(int narg, char** argv)
+{
+   {
+      std::auto_ptr<TC::FileSync::GuiApplication> app(new TC::FileSync::GuiApplication);
+      if (!app->Init(narg, argv, PROGRAM_NAME, PROGRAM_VERSION_STR, PROGRAM_COMPANY))
+      {
+         return 1;
+      }
+
+      if (!app->Run())
+      {
+         return 2;
+      }
+   }
+
+   return 0;
+}
+
