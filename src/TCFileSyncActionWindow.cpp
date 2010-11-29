@@ -30,7 +30,7 @@
 // License along with this library; if not, write to the Free Software       
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 //*******************************************************************************
-//  $Id: TCFileSyncWindow.h 957 2010-01-28 23:17:00Z the_____tiger $
+//  $Id$
 //*******************************************************************************
 
 #include "TCFileSyncActionWindow.h"
@@ -151,7 +151,7 @@ namespace TC
          m_table->setVisibleRows(10);
          m_table->setVisibleColumns(5);
          m_table->setRowHeaderMode(0);
-         m_table->setTableSize(actions.size(),5);
+         m_table->setTableSize(FX::FXint(actions.size()),5);
 
          m_table->setColumnJustify(0, FX::FXHeaderItem::LEFT);
          m_table->setColumnJustify(1, FX::FXHeaderItem::LEFT);

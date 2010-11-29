@@ -30,7 +30,7 @@
 // License along with this library; if not, write to the Free Software       
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 //*******************************************************************************
-//  $Id: TCFileSync.cpp 957 2010-01-28 23:17:00Z the_____tiger $
+//  $Id$
 //*******************************************************************************
 // CONFIX:EXENAME("TCFileSync")
 
@@ -41,6 +41,7 @@
 #include "TCOutput.h"
 #include "TCMTLockable.h"
 #include "TCString.h"
+#include "TCFileName.h"
 #include "TCSystem.h"
 
 #include "TCNewEnable.h"
@@ -135,45 +136,52 @@ namespace TC
       protected:
          virtual bool ProcessArguments(const std::vector< std::string >& argv)
          {
-            for (uint32 i=0; i<argv.size(); i++)
+            for (std::vector<std::string>::const_iterator it=argv.begin(); it!=argv.end(); ++it)
             {
-               if (argv[i] == "--source" || argv[i] == "-s")
+               if (*it == "--source" || *it == "-s")
                {
-                  m_settings.source = argv[++i];
+                  ++it;
+                  m_settings.source = FileName::Simplify(*it);
                }
-               else if (argv[i] == "--destination" || argv[i] == "-d")
+               else if (*it == "--destination" || *it == "-d")
                {
-                  m_settings.destination = argv[++i];
+                  ++it;
+                  m_settings.destination = FileName::Simplify(*it);
                }
-               else if (argv[i] == "--backup_folder" || argv[i] == "-b")
+               else if (*it == "--backup_folder" || *it == "-b")
                {
-                  m_settings.backup_folder = argv[++i];
+                  ++it;
+                  m_settings.backup_folder = FileName::Simplify(*it);
                }
-               else if (argv[i] == "--num_backups" || argv[i] == "-n")
+               else if (*it == "--num_backups" || *it == "-n")
                {
-                  m_settings.num_backups = TC::String::ToUint32(argv[++i]);
+                  ++it;
+                  m_settings.num_backups = TC::String::ToUint32(*it);
                }
-               else if (argv[i] == "--skipp")
+               else if (*it == "--skipp")
                {
-                  m_settings.folders_to_skipp.insert(argv[++i]);
+                  ++it;
+                  m_settings.folders_to_skipp.insert(*it);
                }
-               else if (argv[i] == "--skipp_ext")
+               else if (*it == "--skipp_ext")
                {
-                  m_settings.extensions_to_skipp.insert(argv[++i]);
+                  ++it;
+                  m_settings.extensions_to_skipp.insert(*it);
                }
-               else if (argv[i] == "--ext")
+               else if (*it == "--ext")
                {
-                  m_settings.extensions_to_search_for.insert(argv[++i]);
+                  ++it;
+                  m_settings.extensions_to_search_for.insert(*it);
                }
-               else if (argv[i] == "--info_only" || argv[i] == "-i")
+               else if (*it == "--info_only" || *it == "-i")
                {
                   m_settings.info_mode = true;
                }
-               else if (argv[i] == "--calc_checksum" || argv[i] == "-c")
+               else if (*it == "--calc_checksum" || *it == "-c")
                {
                   m_settings.calc_checksum = true;
                }
-               else if (argv[i] == "--no_gui")
+               else if (*it == "--no_gui")
                {
                   m_start_gui = false;
                }

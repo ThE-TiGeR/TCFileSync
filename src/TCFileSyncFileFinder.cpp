@@ -30,7 +30,7 @@
 // License along with this library; if not, write to the Free Software       
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 //*******************************************************************************
-//  $Id: TCFileSyncFileFinder.cpp 957 2010-01-28 23:17:00Z the_____tiger $
+//  $Id$
 //*******************************************************************************
 #include "TCFileSyncFileFinder.h"
 
@@ -68,6 +68,12 @@ bool TC::FileSync::FileFinder::FindSourceFiles()
    if (!File::ChangeDirectory(m_settings.source)) return false;
    if (!FindRecursiveFiles(".", m_files_source)) return false;
 
+   FileInfos::iterator file_info;
+   for (file_info=m_files_source.begin(); file_info!=m_files_source.end(); ++file_info)
+   {
+      file_info->second.SetDir(m_settings.source);
+   }
+
    TCINFO1("FileSync::FileFinder", "Searching source files in %s done.", m_settings.source.c_str());
    return true;
 }
@@ -85,6 +91,12 @@ bool TC::FileSync::FileFinder::FindDestinationFiles()
    m_files_destination.clear();
    if (!File::ChangeDirectory(m_settings.destination)) return false;
    if (!FindRecursiveFiles(".", m_files_destination)) return false;
+
+   FileInfos::iterator file_info;
+   for (file_info=m_files_destination.begin(); file_info!=m_files_destination.end(); ++file_info)
+   {
+      file_info->second.SetDir(m_settings.destination);
+   }
 
    TCINFO1("FileSync::FileFinder", "Searching destination files in %s done.", m_settings.destination.c_str());
 
@@ -138,11 +150,6 @@ bool TC::FileSync::FileFinder::FindRecursiveFiles(const std::string& search_dir,
             {
                continue;
             }
-         }
-
-         if (m_settings.calc_checksum)
-         {
-            file_info.CalculateHash();
          }
       }
 

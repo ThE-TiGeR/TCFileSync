@@ -30,7 +30,7 @@
 // License along with this library; if not, write to the Free Software       
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 //*******************************************************************************
-//  $Id: TCFileSyncActionGenerator.cpp 957 2010-01-28 23:17:00Z the_____tiger $
+//  $Id$
 //*******************************************************************************
 #include "TCFileSyncActionGenerator.h"
 
@@ -101,8 +101,11 @@ namespace TC
       {
          FileInfos modified_files;
 
+         uint64 num_checked = 0;
+         uint64 total_files = files1.size();
+
          FileInfos::const_iterator file_it;
-         for (file_it=files1.begin(); file_it!=files1.end(); file_it++)
+         for (file_it=files1.begin(); file_it!=files1.end(); file_it++, ++num_checked)
          {
             const FileInfo& file = file_it->second;
             // directories we do not need to check
@@ -121,6 +124,11 @@ namespace TC
                }
                else if (m_settings.calc_checksum)
                {
+                  if ((num_checked % (total_files/100)) == 0)
+                  {
+                     TCINFOS("FileSync", num_checked << "(" << total_files << ")");
+                  }
+
                   if (file.GetHashValue() != found_file->second.GetHashValue())
                   {
                      modified_files[file.GetName()] = file;

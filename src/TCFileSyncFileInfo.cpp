@@ -30,11 +30,12 @@
 // License along with this library; if not, write to the Free Software       
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 //*******************************************************************************
-//  $Id: TCFileSyncFileInfo.cpp 920 2009-03-25 13:16:41Z the_____tiger $
+//  $Id$
 //*******************************************************************************
 #include "TCFileSyncFileInfo.h"
 
 #include "TCFactory.h"
+#include "TCFileName.h"
 #include "TCUtil.h"
 #include "TCMathFactory.h"
 
@@ -46,7 +47,7 @@ namespace TC
    {
       bool FileInfo::CalculateHash() const
       {
-         MemoryMappedFilePtr file = Factory::CreateMemoryMappedFile(m_info.name, true);
+         MemoryMappedFilePtr file = Factory::CreateMemoryMappedFile(GetFullName(), true);
          if (!file)
          {
             return false;
@@ -67,6 +68,11 @@ namespace TC
             CalculateHash();
          }
          return m_hash;
+      }
+
+      std::string FileInfo::GetFullName() const
+      {
+         return FileName::AddFileNameAndPath(m_info.name, m_dir);
       }
    }
 }

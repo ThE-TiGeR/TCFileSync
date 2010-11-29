@@ -30,7 +30,7 @@
 // License along with this library; if not, write to the Free Software       
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 //*******************************************************************************
-//  $Id: TCFileSyncActions.cpp 961 2010-03-27 23:26:56Z the_____tiger $
+//  $Id$
 //*******************************************************************************
 #include "TCFileSyncActions.h"
 
@@ -108,7 +108,7 @@ namespace TC
          {
             std::string dir_name = FileName::GetPath(m_destination.GetName());
             if (!File::IsDirectory(dir_name) &&
-               !File::CreateDirectoryRecursive(dir_name))
+               !File::CreateDirRecursive(dir_name))
             {
                SetErrorString(System::GetLastErrorMessage());
                return false;
@@ -156,7 +156,7 @@ namespace TC
 
          virtual bool Do()
          {
-            if (!File::CreateDirectoryRecursive(m_directory.GetName()))
+            if (!File::CreateDirRecursive(m_directory.GetName()))
             {
                SetErrorString(System::GetLastErrorMessage());
                return false;
@@ -195,7 +195,7 @@ namespace TC
          {
             std::string dir_name = FileName::GetPath(m_destination.GetName());
             if (!File::IsDirectory(dir_name) &&
-               !File::CreateDirectoryRecursive(dir_name))
+               !File::CreateDirRecursive(dir_name))
             {
                SetErrorString(System::GetLastErrorMessage());
                return false;

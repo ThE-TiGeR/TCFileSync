@@ -30,7 +30,7 @@
 // License along with this library; if not, write to the Free Software       
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 //*******************************************************************************
-//  $Id: TCFileSyncFileInfo.h 961 2010-03-27 23:26:56Z the_____tiger $
+//  $Id$
 //*******************************************************************************
 #ifndef _TC_FILE_SYNC_FILE_INFO_H_
 #define _TC_FILE_SYNC_FILE_INFO_H_
@@ -57,12 +57,16 @@ namespace TC
          }
 
          FileInfo(const File::FileInfo& info)
-            :m_info(info)
+            :m_dir()
+            ,m_info(info)
+            ,m_hash()
          {
          }
 
          const std::string& GetName() const {return m_info.name;}
+         std::string GetFullName() const;
          void SetName(const std::string& name) {m_info.name = name;}
+         void SetDir(const std::string& dir) {m_dir = dir;}
          bool IsDirectory() const {return m_info.is_directory;}
          uint64 GetLastModified() const {return m_info.last_modified;}
          uint64 GetFileSize() const {return m_info.file_size;}
@@ -70,6 +74,7 @@ namespace TC
 
          bool CalculateHash() const;
       private:
+         std::string m_dir;
          File::FileInfo m_info;
          mutable std::string m_hash;
       };
