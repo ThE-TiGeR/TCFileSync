@@ -30,7 +30,7 @@
 // License along with this library; if not, write to the Free Software       
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 //*******************************************************************************
-//  $Id: TCFileSyncMLS.cpp 957 2010-01-28 23:17:00Z the_____tiger $
+//  $Id$
 //*******************************************************************************
 
 #include "TCMLSHandler.h"
@@ -39,28 +39,28 @@
 
 #include "TCNewEnable.h"
 
-namespace TC
+namespace tc
 {
-   namespace FileSync
+   namespace file_sync
    {
-      MLS::Text m_tc_file_sync_gui_text_array[] =
+      mls::Text m_tc_file_sync_gui_text_array[] =
       {
-         TC::MLS::Text("TC_FILE_SYNC_FILE",           "en", "&File"),
-         TC::MLS::Text("TC_FILE_SYNC_EXIT",           "en", "&Leave\tAlt-F4"),
-         TC::MLS::Text("TC_FILE_SYNC_OPTIONS",        "en", "&Options"),
-         TC::MLS::Text("TC_FILE_SYNC_HELP",           "en", "&?"),
-         TC::MLS::Text("TC_FILE_SYNC_ABOUT",          "en", "&About"),
+         mls::Text("TC_FILE_SYNC_FILE",           "en", "&File"),
+         mls::Text("TC_FILE_SYNC_EXIT",           "en", "&Leave\tAlt-F4"),
+         mls::Text("TC_FILE_SYNC_OPTIONS",        "en", "&Options"),
+         mls::Text("TC_FILE_SYNC_HELP",           "en", "&?"),
+         mls::Text("TC_FILE_SYNC_ABOUT",          "en", "&About"),
 
-         TC::MLS::Text("TC_FILE_SYNC_SOURCE",          "en", "Source:"),
-         TC::MLS::Text("TC_FILE_SYNC_TARGET",          "en", "Target:"),
-         TC::MLS::Text("TC_FILE_SYNC_SYNCRONIZE",      "en", "Start Sync"),
+         mls::Text("TC_FILE_SYNC_SOURCE",          "en", "Source:"),
+         mls::Text("TC_FILE_SYNC_TARGET",          "en", "Target:"),
+         mls::Text("TC_FILE_SYNC_SYNCRONIZE",      "en", "Start Sync"),
 
-         TC::MLS::Text("TC_FILE_SYNC_PREVIEW",         "en", "Preview"),
-         TC::MLS::Text("TC_FILE_SYNC_NUM_BACKUPS",     "en", "Number of backups"),
-         TC::MLS::Text("TC_FILE_SYNC_BACKUP_FOLDER",   "en", "Backup folder"),
+         mls::Text("TC_FILE_SYNC_PREVIEW",         "en", "Preview"),
+         mls::Text("TC_FILE_SYNC_NUM_BACKUPS",     "en", "Number of backups"),
+         mls::Text("TC_FILE_SYNC_BACKUP_FOLDER",   "en", "Backup folder"),
       };
 
-      MLS::Texts m_tc_file_sync_gui_texts(Util::ArraySize(m_tc_file_sync_gui_text_array),
+      mls::Texts m_tc_file_sync_gui_texts(util::ArraySize(m_tc_file_sync_gui_text_array),
          m_tc_file_sync_gui_text_array);
    }
 }

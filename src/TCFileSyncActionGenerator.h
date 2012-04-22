@@ -30,7 +30,7 @@
 // License along with this library; if not, write to the Free Software       
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 //*******************************************************************************
-//  $Id: TCFileSyncActionGenerator.h 957 2010-01-28 23:17:00Z the_____tiger $
+//  $Id$
 //*******************************************************************************
 #ifndef _TC_FILE_SYNC_ACTION_GENERATOR_H_
 #define _TC_FILE_SYNC_ACTION_GENERATOR_H_
@@ -39,9 +39,9 @@
 #include "TCFileSyncFileFinder.h"
 #include "TCFileSyncSettings.h"
 
-namespace TC
+namespace tc
 {
-   namespace FileSync
+   namespace file_sync
    {
       class ActionGenerator
       {

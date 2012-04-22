@@ -42,9 +42,9 @@
 #include <map>
 #include <string>
 
-namespace TC
+namespace tc
 {
-   namespace FileSync
+   namespace file_sync
    {
       typedef std::vector<std::string>        FileNames;
       typedef std::set<std::string>           FileNamesSorted;
@@ -56,7 +56,7 @@ namespace TC
          {
          }
 
-         FileInfo(const File::FileInfo& info)
+         FileInfo(const file::FileInfo& info)
             :m_dir()
             ,m_info(info)
             ,m_hash()
@@ -75,7 +75,7 @@ namespace TC
          bool CalculateHash() const;
       private:
          std::string m_dir;
-         File::FileInfo m_info;
+         file::FileInfo m_info;
          mutable std::string m_hash;
       };
 

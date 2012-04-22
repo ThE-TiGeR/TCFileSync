@@ -30,7 +30,7 @@
 // License along with this library; if not, write to the Free Software       
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 //*******************************************************************************
-//  $Id: TCFileSyncOptionsWindow.h 957 2010-01-28 23:17:00Z the_____tiger $
+//  $Id$
 //*******************************************************************************
 
 #ifndef _TC_FILE_SYNC_OPTIONS_WINDOW_H_
@@ -39,15 +39,15 @@
 #include "TCGuiActionBox.h"
 #include "TCFileSyncSettings.h"
 
-namespace TC
+namespace tc
 {
-   namespace FileSync
+   namespace file_sync
    {
 
       /**
       * Class creates the property window for the chat settings
       */
-      class OptionsWindow: public Gui::ActionBox
+      class OptionsWindow: public gui::ActionBox
       {
          TCGUIBASE_DECLARE(OptionsWindow);
 
@@ -55,7 +55,7 @@ namespace TC
          /// FXID`s need for widget message handling of this class
          enum OptionsWindowFXIDs
          {
-            ID_PREVIEW = Gui::ActionBox::ID_LAST,
+            ID_PREVIEW = gui::ActionBox::ID_LAST,
             ID_NUM_BACKUPS,
             ID_BACKUP_FOLDER,
             ID_FOLDERS_TO_SKIPP,
@@ -71,10 +71,13 @@ namespace TC
 
          long OnCmdPreview(FX::FXObject *obj, FX::FXSelector sel, void *ptr);
          long OnUpdPreview(FX::FXObject *obj, FX::FXSelector sel, void *ptr);
+         long OnCmdNumBackups(FX::FXObject *obj, FX::FXSelector sel, void* ptr);
+         long OnUpdNumBackups(FX::FXObject *obj, FX::FXSelector sel, void* ptr);
+         long OnCmdBackupFolder(FX::FXObject *obj, FX::FXSelector sel, void* ptr);
+         long OnUpdBackupFolder(FX::FXObject *obj, FX::FXSelector sel, void* ptr);
 
       protected:
          OptionsWindow() {}
-
       private:
          Settings m_settings;
       };

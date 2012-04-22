@@ -43,9 +43,9 @@
 
 #include "TCNewEnable.h"
 
-namespace TC
+namespace tc
 {
-   namespace FileSync
+   namespace file_sync
    {
 
       class ActionBase: public Action
@@ -106,22 +106,22 @@ namespace TC
 
          virtual bool Do()
          {
-            std::string dir_name = FileName::GetPath(m_destination.GetName());
-            if (!File::IsDirectory(dir_name) &&
-               !File::CreateDirRecursive(dir_name))
+            std::string dir_name = file_name::GetPath(m_destination.GetName());
+            if (!file::IsDirectory(dir_name) &&
+               !file::CreateDirRecursive(dir_name))
             {
-               SetErrorString(System::GetLastErrorMessage());
+               SetErrorString(system::GetLastErrorMessage());
                return false;
             }
 
-            if (File::Exists(m_destination.GetName()))
+            if (file::Exists(m_destination.GetName()))
             {
-               File::SetFileAttr(m_destination.GetName(), File::FILEATTR_WRITE);
+               file::SetFileAttr(m_destination.GetName(), file::FILEATTR_WRITE);
             }
 
-            if (!File::Copy(m_source.GetName(), m_destination.GetName()))
+            if (!file::Copy(m_source.GetName(), m_destination.GetName()))
             {
-               SetErrorString(System::GetLastErrorMessage());
+               SetErrorString(system::GetLastErrorMessage());
                return false;
             }
 
@@ -156,9 +156,9 @@ namespace TC
 
          virtual bool Do()
          {
-            if (!File::CreateDirRecursive(m_directory.GetName()))
+            if (!file::CreateDirRecursive(m_directory.GetName()))
             {
-               SetErrorString(System::GetLastErrorMessage());
+               SetErrorString(system::GetLastErrorMessage());
                return false;
             }
 
@@ -193,17 +193,17 @@ namespace TC
 
          virtual bool Do()
          {
-            std::string dir_name = FileName::GetPath(m_destination.GetName());
-            if (!File::IsDirectory(dir_name) &&
-               !File::CreateDirRecursive(dir_name))
+            std::string dir_name = file_name::GetPath(m_destination.GetName());
+            if (!file::IsDirectory(dir_name) &&
+               !file::CreateDirRecursive(dir_name))
             {
-               SetErrorString(System::GetLastErrorMessage());
+               SetErrorString(system::GetLastErrorMessage());
                return false;
             }
 
-            if (!File::Move(m_source.GetName(), m_destination.GetName()))
+            if (!file::Move(m_source.GetName(), m_destination.GetName()))
             {
-               SetErrorString(System::GetLastErrorMessage());
+               SetErrorString(system::GetLastErrorMessage());
                return false;
             }
 
@@ -238,10 +238,10 @@ namespace TC
 
          virtual bool Do()
          {
-            File::SetFileAttr(m_file.GetName(), File::FILEATTR_WRITE);
-            if (!File::Remove(m_file.GetName()))
+            file::SetFileAttr(m_file.GetName(), file::FILEATTR_WRITE);
+            if (!file::Remove(m_file.GetName()))
             {
-               SetErrorString(System::GetLastErrorMessage());
+               SetErrorString(system::GetLastErrorMessage());
                return false;
             }
 

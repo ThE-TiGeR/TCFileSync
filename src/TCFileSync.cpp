@@ -46,14 +46,14 @@
 
 #include "TCNewEnable.h"
 
-namespace TC
+namespace tc
 {
-   namespace FileSync
+   namespace file_sync
    {
-      static TC::StreamPtr s_out;
+      static StreamPtr s_out;
 
-      class MTTraceTarget: public Output::PrintTarget,
-         public MT::ObjectLevelLockable<MTTraceTarget>
+      class MTTraceTarget: public output::PrintTarget,
+         public multi_threading::ObjectLevelLockable<MTTraceTarget>
       {
       public:
          MTTraceTarget()
@@ -66,10 +66,10 @@ namespace TC
             s_out << text << endl << flush;
          }
       private:
-         friend class MT::LockerPtr< MTTraceTarget* >;
+         friend class multi_threading::LockerPtr< MTTraceTarget* >;
       };
 
-      class GuiApplication: public Gui::Application
+      class GuiApplication: public gui::Application
       {
       public:
          GuiApplication()
@@ -77,17 +77,17 @@ namespace TC
             m_start_gui(true),
             m_window(0)
          {
-            s_out = Factory::CreateStdOutStream();
+            s_out = factory::CreateStdOutStream();
 
-            Output::PrintTargetPtr trace_target(new MTTraceTarget);
-            Output::SetErrorTarget(trace_target);
-            Output::SetWarningTarget(trace_target);
-            Output::SetInfoTarget(trace_target);
-            Output::SetTraceTarget(trace_target);
+            output::PrintTargetPtr trace_target(new MTTraceTarget);
+            output::SetErrorTarget(trace_target);
+            output::SetWarningTarget(trace_target);
+            output::SetInfoTarget(trace_target);
+            output::SetTraceTarget(trace_target);
 
-            s_out << PROGRAM_NAME ": Version " PROGRAM_VERSION_STR << TC::endl
+            s_out << PROGRAM_NAME ": Version " PROGRAM_VERSION_STR << endl
                << "            This product includes: " << TCPRODUCT_STR "-" TCVERSION_STR
-               << TC::endl << TC::endl;
+               << endl << endl;
 
             m_settings.info_mode     = false;
             m_settings.calc_checksum = false;
@@ -97,10 +97,10 @@ namespace TC
 
          ~GuiApplication()
          {
-            Output::SetErrorTarget(Output::PrintTargetPtr());
-            Output::SetWarningTarget(Output::PrintTargetPtr());
-            Output::SetInfoTarget(Output::PrintTargetPtr());
-            Output::SetTraceTarget(Output::PrintTargetPtr());
+            output::SetErrorTarget(output::PrintTargetPtr());
+            output::SetWarningTarget(output::PrintTargetPtr());
+            output::SetInfoTarget(output::PrintTargetPtr());
+            output::SetTraceTarget(output::PrintTargetPtr());
 
             s_out = StreamPtr();
          }
@@ -109,7 +109,7 @@ namespace TC
          {
             if (m_start_gui)
             {
-               return Gui::Application::Run();
+               return gui::Application::Run();
             }
 
             if (m_window)
@@ -141,22 +141,22 @@ namespace TC
                if (*it == "--source" || *it == "-s")
                {
                   ++it;
-                  m_settings.source = FileName::Simplify(*it);
+                  m_settings.source = file_name::Simplify(*it);
                }
                else if (*it == "--destination" || *it == "-d")
                {
                   ++it;
-                  m_settings.destination = FileName::Simplify(*it);
+                  m_settings.destination = file_name::Simplify(*it);
                }
                else if (*it == "--backup_folder" || *it == "-b")
                {
                   ++it;
-                  m_settings.backup_folder = FileName::Simplify(*it);
+                  m_settings.backup_folder = file_name::Simplify(*it);
                }
                else if (*it == "--num_backups" || *it == "-n")
                {
                   ++it;
-                  m_settings.num_backups = TC::String::ToUint32(*it);
+                  m_settings.num_backups = string::ToUint32(*it);
                }
                else if (*it == "--skipp")
                {
@@ -234,7 +234,7 @@ namespace TC
 int main(int narg, char** argv)
 {
    {
-      std::auto_ptr<TC::FileSync::GuiApplication> app(new TC::FileSync::GuiApplication);
+      std::auto_ptr<tc::file_sync::GuiApplication> app(new tc::file_sync::GuiApplication);
       if (!app->Init(narg, argv, PROGRAM_NAME, PROGRAM_VERSION_STR, PROGRAM_COMPANY))
       {
          return 1;

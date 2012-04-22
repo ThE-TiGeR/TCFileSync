@@ -1,0 +1,4 @@
+TCSystem = TCSystemPath
+
+[subpaths]
+TCSystemPath = ../TCSystem/

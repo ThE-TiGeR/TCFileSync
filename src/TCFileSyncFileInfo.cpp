@@ -41,19 +41,19 @@
 
 #include "TCNewEnable.h"
 
-namespace TC
+namespace tc
 {
-   namespace FileSync
+   namespace file_sync
    {
       bool FileInfo::CalculateHash() const
       {
-         MemoryMappedFilePtr file = Factory::CreateMemoryMappedFile(GetFullName(), true);
+         MemoryMappedFilePtr file = factory::CreateMemoryMappedFile(GetFullName(), true);
          if (!file)
          {
             return false;
          }
 
-         Math::ChecksumPtr checksum = Math::Factory::CreateMD5Checksum();
+         math::ChecksumPtr checksum = math::factory::CreateMD5Checksum();
          checksum->Append(file->GetReadOnlyData(), file->GetSize());
 
          m_hash = checksum->GetHashString();
@@ -72,7 +72,7 @@ namespace TC
 
       std::string FileInfo::GetFullName() const
       {
-         return FileName::AddFileNameAndPath(m_info.name, m_dir);
+         return file_name::AddFileNameAndPath(m_info.name, m_dir);
       }
    }
 }

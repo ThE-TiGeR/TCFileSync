@@ -30,7 +30,7 @@
 // License along with this library; if not, write to the Free Software       
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 //*******************************************************************************
-//  $Id: TCFileSyncWindow.h 957 2010-01-28 23:17:00Z the_____tiger $
+//  $Id$
 //*******************************************************************************
 #ifndef _TC_FILE_SYNC_WINDOW_H_
 #define _TC_FILE_SYNC_WINDOW_H_
@@ -38,15 +38,15 @@
 #include "TCGuiApplication.h"
 #include "TCFileSyncSettings.h"
 
-namespace TC
+namespace tc
 {
-   namespace FileSync
+   namespace file_sync
    {
       class Window: public FX::FXMainWindow
       {
          TCGUIBASE_DECLARE(Window);
       public:
-         Window(Gui::Application* appl, const Settings& settings);
+         Window(gui::Application* appl, const Settings& settings);
          virtual ~Window();
 
          /** Enumarations for all fox messages for this class */
@@ -88,7 +88,7 @@ namespace TC
          Window() {}
 
       private:
-         Gui::Application* m_appl;
+         gui::Application* m_appl;
          Settings m_settings;
          FX::FXMenuPane* m_file_menu;
          FX::FXMenuPane* m_help_menu;

@@ -41,121 +41,124 @@
 
 #include "TCNewEnable.h"
 
-TC::FileSync::FileFinder::FileFinder(const Settings& settings)
-:m_settings(settings)
+namespace tc
 {
-}
-
-TC::FileSync::FileFinder::~FileFinder()
-{
-}
-
-bool TC::FileSync::FileFinder::Find()
-{
-   std::string dir_save = File::GetDirectory();
-
-   if (!FindSourceFiles()) return false;
-   if (!FindDestinationFiles()) return false;
-
-   return File::ChangeDirectory(dir_save);
-}
-
-bool TC::FileSync::FileFinder::FindSourceFiles()
-{
-   TCINFO1("FileSync::FileFinder", "Searching source files in %s ...", m_settings.source.c_str());
-
-   m_files_source.clear();
-   if (!File::ChangeDirectory(m_settings.source)) return false;
-   if (!FindRecursiveFiles(".", m_files_source)) return false;
-
-   FileInfos::iterator file_info;
-   for (file_info=m_files_source.begin(); file_info!=m_files_source.end(); ++file_info)
+   file_sync::FileFinder::FileFinder(const Settings& settings)
+      :m_settings(settings)
    {
-      file_info->second.SetDir(m_settings.source);
    }
 
-   TCINFO1("FileSync::FileFinder", "Searching source files in %s done.", m_settings.source.c_str());
-   return true;
-}
-
-bool TC::FileSync::FileFinder::FindDestinationFiles()
-{
-   TCINFO1("FileSync::FileFinder", "Searching destination files in %s ...", m_settings.destination.c_str());
-
-   // reset setting for destination search because we have to find all
-   FileSync::Settings settings = m_settings;
-   m_settings.extensions_to_search_for.clear();
-   m_settings.extensions_to_skipp.clear();
-   m_settings.folders_to_skipp.clear();
-
-   m_files_destination.clear();
-   if (!File::ChangeDirectory(m_settings.destination)) return false;
-   if (!FindRecursiveFiles(".", m_files_destination)) return false;
-
-   FileInfos::iterator file_info;
-   for (file_info=m_files_destination.begin(); file_info!=m_files_destination.end(); ++file_info)
+   file_sync::FileFinder::~FileFinder()
    {
-      file_info->second.SetDir(m_settings.destination);
    }
 
-   TCINFO1("FileSync::FileFinder", "Searching destination files in %s done.", m_settings.destination.c_str());
-
-   m_settings = settings;
-
-   return true;
-}
-
-bool TC::FileSync::FileFinder::FindRecursiveFiles(const std::string& search_dir, FileInfos& files)
-{
-   std::vector<File::FileInfo> file_infos_of_dir;
-   File::GetFileInfosOfDirectory(file_infos_of_dir, search_dir);
-
-   std::vector<File::FileInfo>::const_iterator file;
-   for (file=file_infos_of_dir.begin(); file!=file_infos_of_dir.end(); file++)
+   bool file_sync::FileFinder::Find()
    {
-      FileInfo file_info(*file);
-      file_info.SetName(FileName::AddFileNameAndPath(file->name, search_dir));
-      if (file_info.IsDirectory())
+      std::string dir_save = file::GetDirectory();
+
+      if (!FindSourceFiles()) return false;
+      if (!FindDestinationFiles()) return false;
+
+      return file::ChangeDirectory(dir_save);
+   }
+
+   bool file_sync::FileFinder::FindSourceFiles()
+   {
+      TCINFO1("FileSync::FileFinder", "Searching source files in %s ...", m_settings.source.c_str());
+
+      m_files_source.clear();
+      if (!file::ChangeDirectory(m_settings.source)) return false;
+      if (!FindRecursiveFiles(".", m_files_source)) return false;
+
+      FileInfos::iterator file_info;
+      for (file_info=m_files_source.begin(); file_info!=m_files_source.end(); ++file_info)
       {
-         // check if we have to ignore this folder
-         if (m_settings.folders_to_skipp.find(file->name) == m_settings.folders_to_skipp.end() &&
-             file->name != m_settings.backup_folder)
+         file_info->second.SetDir(m_settings.source);
+      }
+
+      TCINFO1("FileSync::FileFinder", "Searching source files in %s done.", m_settings.source.c_str());
+      return true;
+   }
+
+   bool file_sync::FileFinder::FindDestinationFiles()
+   {
+      TCINFO1("FileSync::FileFinder", "Searching destination files in %s ...", m_settings.destination.c_str());
+
+      // reset setting for destination search because we have to find all
+      file_sync::Settings settings = m_settings;
+      m_settings.extensions_to_search_for.clear();
+      m_settings.extensions_to_skipp.clear();
+      m_settings.folders_to_skipp.clear();
+
+      m_files_destination.clear();
+      if (!file::ChangeDirectory(m_settings.destination)) return false;
+      if (!FindRecursiveFiles(".", m_files_destination)) return false;
+
+      FileInfos::iterator file_info;
+      for (file_info=m_files_destination.begin(); file_info!=m_files_destination.end(); ++file_info)
+      {
+         file_info->second.SetDir(m_settings.destination);
+      }
+
+      TCINFO1("FileSync::FileFinder", "Searching destination files in %s done.", m_settings.destination.c_str());
+
+      m_settings = settings;
+
+      return true;
+   }
+
+   bool file_sync::FileFinder::FindRecursiveFiles(const std::string& search_dir, FileInfos& files)
+   {
+      std::vector<file::FileInfo> file_infos_of_dir;
+      file::GetFileInfosOfDirectory(file_infos_of_dir, search_dir);
+
+      std::vector<file::FileInfo>::const_iterator file;
+      for (file=file_infos_of_dir.begin(); file!=file_infos_of_dir.end(); file++)
+      {
+         FileInfo file_info(*file);
+         file_info.SetName(file_name::AddFileNameAndPath(file->name, search_dir));
+         if (file_info.IsDirectory())
          {
-            FindRecursiveFiles(file_info.GetName(), files);
+            // check if we have to ignore this folder
+            if (m_settings.folders_to_skipp.find(file->name) == m_settings.folders_to_skipp.end() &&
+               file->name != m_settings.backup_folder)
+            {
+               FindRecursiveFiles(file_info.GetName(), files);
+            }
+            else
+            {
+               continue;
+            }
          }
          else
          {
-            continue;
-         }
-      }
-      else
-      {
-         // check if only some predefined extensions should be searched
-         if (m_settings.extensions_to_search_for.size())
-         {
-            std::string ext = FileName::GetExtension(file_info.GetName());
-            if (m_settings.extensions_to_search_for.find(ext) == 
-               m_settings.extensions_to_search_for.end())
+            // check if only some predefined extensions should be searched
+            if (m_settings.extensions_to_search_for.size())
             {
-               continue;
+               std::string ext = file_name::GetExtension(file_info.GetName());
+               if (m_settings.extensions_to_search_for.find(ext) == 
+                  m_settings.extensions_to_search_for.end())
+               {
+                  continue;
+               }
+            }
+
+            // check if we have to skipp some extensions
+            if (m_settings.extensions_to_skipp.size())
+            {
+               std::string ext = file_name::GetExtension(file_info.GetName());
+               if (m_settings.extensions_to_skipp.find(ext) != 
+                  m_settings.extensions_to_skipp.end())
+               {
+                  continue;
+               }
             }
          }
 
-         // check if we have to skipp some extensions
-         if (m_settings.extensions_to_skipp.size())
-         {
-            std::string ext = FileName::GetExtension(file_info.GetName());
-            if (m_settings.extensions_to_skipp.find(ext) != 
-               m_settings.extensions_to_skipp.end())
-            {
-               continue;
-            }
-         }
+         TCTRACE1("FileSync::FileFinder", 10, "Found file %s.", file_info.GetName().c_str());
+         files[file_info.GetName()] = file_info;
       }
 
-      TCTRACE1("FileSync::FileFinder", 10, "Found file %s.", file_info.GetName().c_str());
-      files[file_info.GetName()] = file_info;
+      return true;
    }
-
-   return true;
 }

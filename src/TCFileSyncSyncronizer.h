@@ -30,16 +30,16 @@
 // License along with this library; if not, write to the Free Software       
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 //*******************************************************************************
-//  $Id: TCFileSyncSyncronizer.h 961 2010-03-27 23:26:56Z the_____tiger $
+//  $Id$
 //*******************************************************************************
 #ifndef _TC_FILE_SYNC_SYNCHRONIZER_H_
 #define _TC_FILE_SYNC_SYNCHRONIZER_H_
 
 #include "TCFileSyncActionGenerator.h"
 
-namespace TC
+namespace tc
 {
-   namespace FileSync
+   namespace file_sync
    {
       class Syncronizer
       {

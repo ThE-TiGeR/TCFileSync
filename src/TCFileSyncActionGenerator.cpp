@@ -41,16 +41,16 @@
 
 #include "TCNewEnable.h"
 
-namespace TC
+namespace tc
 {
-   namespace FileSync
+   namespace file_sync
    {
       ActionGenerator::ActionGenerator(const Settings& settings)
          :m_file_finder(settings),
          m_settings(settings)
       {
 
-         m_settings.backup_folder = FileName::AddFileNameAndPath(settings.backup_folder, settings.destination);
+         m_settings.backup_folder = file_name::AddFileNameAndPath(settings.backup_folder, settings.destination);
       }
 
       bool ActionGenerator::CreateActions()
@@ -146,12 +146,12 @@ namespace TC
          for (file_info_it=missing_files.begin(); file_info_it!=missing_files.end(); file_info_it++)
          {
             FileInfo dest_file_info = file_info_it->second;
-            dest_file_info.SetName(FileName::AddFileNameAndPath(file_info_it->second.GetName(), m_settings.destination));
+            dest_file_info.SetName(file_name::AddFileNameAndPath(file_info_it->second.GetName(), m_settings.destination));
 
             if (!dest_file_info.IsDirectory())
             {
                FileInfo source_file_info = file_info_it->second;
-               source_file_info.SetName(FileName::AddFileNameAndPath(file_info_it->second.GetName(), m_settings.source));
+               source_file_info.SetName(file_name::AddFileNameAndPath(file_info_it->second.GetName(), m_settings.source));
                m_actions.push_back(CreateCopyAction(source_file_info, dest_file_info));
             }
          }
@@ -159,20 +159,20 @@ namespace TC
 
       uint32 ActionGenerator::CreateBackupActionsForFile(const std::string& source_file_name)
       {
-         std::string ext         = FileName::GetExtension(source_file_name);
-         std::string file_name   = FileName::RemoveExtension(source_file_name);
-         std::string path        = FileName::GetPath(source_file_name);
+         std::string ext         = file_name::GetExtension(source_file_name);
+         std::string file_name   = file_name::RemoveExtension(source_file_name);
+         std::string path        = file_name::GetPath(source_file_name);
 
          uint32 backup_id = 1;
          Actions actions;
          for (uint32 file_idx=m_settings.num_backups; file_idx>0 ; file_idx--)
          {
-            std::string backup_id1 = "$" + String::ToString(file_idx) + "$";
-            std::string file_name1 = FileName::AddFileNameAndExtension(file_name, backup_id1);
-            file_name1 = FileName::AddFileNameAndExtension(file_name1, ext);
-            file_name1 = FileName::AddFileNameAndPath(file_name1, m_settings.backup_folder);
+            std::string backup_id1 = "$" + string::ToString(file_idx) + "$";
+            std::string file_name1 = file_name::AddFileNameAndExtension(file_name, backup_id1);
+            file_name1 = file_name::AddFileNameAndExtension(file_name1, ext);
+            file_name1 = file_name::AddFileNameAndPath(file_name1, m_settings.backup_folder);
             // if file does not exist nothing needs to be done
-            if (!File::Exists(file_name1))
+            if (!file::Exists(file_name1))
             {
                continue;
             }
@@ -192,10 +192,10 @@ namespace TC
 
             if (file_idx == 1) continue;
 
-            std::string backup_id2 = "$" + String::ToString(file_idx-1) + "$";
-            std::string file_name2 = FileName::AddFileNameAndExtension(file_name, backup_id2);
-            file_name2 = FileName::AddFileNameAndExtension(file_name2, ext);
-            file_name2 = FileName::AddFileNameAndPath(file_name2, m_settings.backup_folder);
+            std::string backup_id2 = "$" + string::ToString(file_idx-1) + "$";
+            std::string file_name2 = file_name::AddFileNameAndExtension(file_name, backup_id2);
+            file_name2 = file_name::AddFileNameAndExtension(file_name2, ext);
+            file_name2 = file_name::AddFileNameAndPath(file_name2, m_settings.backup_folder);
 
             FileInfo file_info1;
             file_info1.SetName(file_name1);
@@ -215,23 +215,23 @@ namespace TC
          for (file_info_it=modified_files.begin(); file_info_it!=modified_files.end(); file_info_it++)
          {
             FileInfo source_file_info = file_info_it->second;
-            source_file_info.SetName(FileName::AddFileNameAndPath(file_info_it->second.GetName(), m_settings.source));
+            source_file_info.SetName(file_name::AddFileNameAndPath(file_info_it->second.GetName(), m_settings.source));
 
             FileInfo dest_file_info = file_info_it->second;
-            dest_file_info.SetName(FileName::AddFileNameAndPath(file_info_it->second.GetName(), m_settings.destination));
+            dest_file_info.SetName(file_name::AddFileNameAndPath(file_info_it->second.GetName(), m_settings.destination));
 
             if (m_settings.num_backups > 0)
             {
                uint32 backup_id = CreateBackupActionsForFile(file_info_it->second.GetName());
 
-               std::string ext         = FileName::GetExtension(file_info_it->second.GetName());
-               std::string file_name   = FileName::RemoveExtension(file_info_it->second.GetName());
-               std::string backup_name = "$" + String::ToString(backup_id) + "$";
-               file_name               = FileName::AddFileNameAndExtension(file_name, backup_name);
-               file_name               = FileName::AddFileNameAndExtension(file_name, ext);
+               std::string ext         = file_name::GetExtension(file_info_it->second.GetName());
+               std::string file_name   = file_name::RemoveExtension(file_info_it->second.GetName());
+               std::string backup_name = "$" + string::ToString(backup_id) + "$";
+               file_name               = file_name::AddFileNameAndExtension(file_name, backup_name);
+               file_name               = file_name::AddFileNameAndExtension(file_name, ext);
 
                FileInfo move_file_info = file_info_it->second;
-               move_file_info.SetName(FileName::AddFileNameAndPath(file_name, m_settings.backup_folder));
+               move_file_info.SetName(file_name::AddFileNameAndPath(file_name, m_settings.backup_folder));
 
                m_actions.push_back(CreateMoveAction(dest_file_info, move_file_info));
             }
@@ -246,7 +246,7 @@ namespace TC
          for (file_info_it=deleted_files.rbegin(); file_info_it!=deleted_files.rend(); file_info_it++)
          {
             FileInfo source_file_info = file_info_it->second;
-            source_file_info.SetName(FileName::AddFileNameAndPath(file_info_it->second.GetName(), m_settings.destination));
+            source_file_info.SetName(file_name::AddFileNameAndPath(file_info_it->second.GetName(), m_settings.destination));
 
             if (file_info_it->second.IsDirectory() || m_settings.num_backups == 0)
             {
@@ -256,14 +256,14 @@ namespace TC
             {
                uint32 backup_id = CreateBackupActionsForFile(file_info_it->second.GetName());
 
-               std::string ext         = FileName::GetExtension(file_info_it->second.GetName());
-               std::string file_name   = FileName::RemoveExtension(file_info_it->second.GetName());
-               std::string backup_name = "$" + String::ToString(backup_id) + "$";
-               file_name               = FileName::AddFileNameAndExtension(file_name, backup_name);
-               file_name               = FileName::AddFileNameAndExtension(file_name, ext);
+               std::string ext         = file_name::GetExtension(file_info_it->second.GetName());
+               std::string file_name   = file_name::RemoveExtension(file_info_it->second.GetName());
+               std::string backup_name = "$" + string::ToString(backup_id) + "$";
+               file_name               = file_name::AddFileNameAndExtension(file_name, backup_name);
+               file_name               = file_name::AddFileNameAndExtension(file_name, ext);
 
                FileInfo dest_file_info = file_info_it->second;
-               dest_file_info.SetName(FileName::AddFileNameAndPath(file_name, m_settings.backup_folder));
+               dest_file_info.SetName(file_name::AddFileNameAndPath(file_name, m_settings.backup_folder));
                m_actions.push_back(CreateMoveAction(source_file_info, dest_file_info));
             }
          }

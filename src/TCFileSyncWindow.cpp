@@ -30,7 +30,7 @@
 // License along with this library; if not, write to the Free Software       
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 //*******************************************************************************
-//  $Id: TCFileSyncWindow.cpp 961 2010-03-27 23:26:56Z the_____tiger $
+//  $Id$
 //*******************************************************************************
 #include "TCFileSyncWindow.h"
 
@@ -48,9 +48,9 @@
 
 #include "TCNewEnable.h"
 
-namespace TC
+namespace tc
 {
-   namespace FileSync
+   namespace file_sync
    {
       FXDEFMAP(Window) WindowMap[] =
       {
@@ -75,10 +75,10 @@ namespace TC
 
       TCGUIBASE_IMPLEMENT(Window, FX::FXMainWindow, WindowMap, ARRAYNUMBER(WindowMap))
 
-      Window::Window(Gui::Application* appl, const Settings& settings)
+      Window::Window(gui::Application* appl, const Settings& settings)
          :FX::FXMainWindow(FX::FXApp::instance(), PROGRAM_NAME, 
-         Gui::ImageHandler::GetIcon("tc_im_chat-window"),
-         Gui::ImageHandler::GetIcon("tc_im_chat-window"),
+         gui::ImageHandler::GetInstance()->GetIcon("tc_im_chat-window"),
+         gui::ImageHandler::GetInstance()->GetIcon("tc_im_chat-window"),
          FX::DECOR_ALL, 500, 50, 400, 0, 0, 0),
          m_appl(appl),
          m_settings(settings),
@@ -92,27 +92,27 @@ namespace TC
 
          // file menu
          m_file_menu = new FX::FXMenuPane(this);
-         new Gui::MenuTitle(menu_bar, "TC_FILE_SYNC_FILE", 0, m_file_menu);
-         new Gui::MenuCommand(m_file_menu, "TC_FILE_SYNC_OPTIONS", 0, this, ID_OPTIONS);
-         new Gui::MenuCommand(m_file_menu, "TC_FILE_SYNC_EXIT", 0, this, ID_QUIT);
+         new gui::MenuTitle(menu_bar, "TC_FILE_SYNC_FILE", 0, m_file_menu);
+         new gui::MenuCommand(m_file_menu, "TC_FILE_SYNC_OPTIONS", 0, this, ID_OPTIONS);
+         new gui::MenuCommand(m_file_menu, "TC_FILE_SYNC_EXIT", 0, this, ID_QUIT);
 
          // Help menu
          m_help_menu = new FX::FXMenuPane(this);
-         new Gui::MenuTitle(menu_bar, "TC_FILE_SYNC_HELP", 0, m_help_menu);
-         new Gui::MenuCommand(m_help_menu, "TC_FILE_SYNC_ABOUT", 0, this, ID_ABOUT);
+         new gui::MenuTitle(menu_bar, "TC_FILE_SYNC_HELP", 0, m_help_menu);
+         new gui::MenuCommand(m_help_menu, "TC_FILE_SYNC_ABOUT", 0, this, ID_ABOUT);
 
          FX::FXMatrix* matrix = new FX::FXMatrix(this, 3, FX::MATRIX_BY_COLUMNS|FX::LAYOUT_FILL_X);
          
-         new Gui::Label(matrix, "TC_FILE_SYNC_SOURCE");
+         new gui::Label(matrix, "TC_FILE_SYNC_SOURCE");
          new FX::FXTextField(matrix, 20, this, ID_SOURCE_DIR, FX::TEXTFIELD_NORMAL|FX::LAYOUT_FILL_X|FX::LAYOUT_FILL_COLUMN);
-         new Gui::Button(matrix, "...", 0, this, ID_SEL_SOURCE_DIR);
+         new gui::Button(matrix, "...", 0, this, ID_SEL_SOURCE_DIR);
 
-         new Gui::Label(matrix, "TC_FILE_SYNC_TARGET");
+         new gui::Label(matrix, "TC_FILE_SYNC_TARGET");
          new FX::FXTextField(matrix, 20, this, ID_TARGET_DIR, FX::TEXTFIELD_NORMAL|FX::LAYOUT_FILL_X|FX::LAYOUT_FILL_COLUMN);
-         new Gui::Button(matrix, "...", 0, this, ID_SEL_TARGET_DIR);
+         new gui::Button(matrix, "...", 0, this, ID_SEL_TARGET_DIR);
 
          FX::FXVerticalFrame* frame = new FX::FXVerticalFrame(this, FX::LAYOUT_FILL);
-         new Gui::Button(frame, "TC_FILE_SYNC_SYNCRONIZE", 0, this, ID_SYNC, FX::BUTTON_NORMAL|FX::LAYOUT_RIGHT);
+         new gui::Button(frame, "TC_FILE_SYNC_SYNCRONIZE", 0, this, ID_SYNC, FX::BUTTON_NORMAL|FX::LAYOUT_RIGHT);
 
       }
 
@@ -130,7 +130,7 @@ namespace TC
 
       long Window::OnCmdQuit(FX::FXObject*, FX::FXSelector, void*)
       {
-         static_cast<Gui::Application*>(Application::GetInstance())->Exit(0);
+         static_cast<gui::Application*>(Application::GetInstance())->Exit(0);
          return 0;
       }
 
@@ -143,11 +143,11 @@ namespace TC
          mess = mess + "\n\n" + TCCOPYRIGHT;
          mess = mess + "\nHome Page: " + TCHOMPAGE;
          mess = mess + "\n\nThis product includes: fox-"
-            + String::ToString(FOX_MAJOR) + "." 
-            + String::ToString(FOX_MINOR) + "." 
-            + String::ToString(FOX_LEVEL);
+            + string::ToString(FOX_MAJOR) + "." 
+            + string::ToString(FOX_MINOR) + "." 
+            + string::ToString(FOX_LEVEL);
          mess = mess + ", " + TCPRODUCT_STR + "-" TCVERSION_STR;
-         Gui::MessageBox::Information(this, "About", mess);
+         gui::MessageBox::Information(this, "About", mess);
 
          return 0;
       }
@@ -213,11 +213,11 @@ namespace TC
          ActionWindow* aw = new ActionWindow(this, syncronicer.GetActions());
          aw->create();
 
-         if (!syncronicer.SyncDestination())
-         {
-            TCERROR("FileSync", "Failed syncing directories");
-            return 0;
-         }
+//          if (!syncronicer.SyncDestination())
+//          {
+//             TCERROR("FileSync", "Failed syncing directories");
+//             return 0;
+//          }
 
          return 0;
       }

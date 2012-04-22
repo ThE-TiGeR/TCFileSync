@@ -39,9 +39,9 @@
 
 #include "TCNewEnable.h"
 
-namespace TC
+namespace tc
 {
-   namespace FileSync
+   namespace file_sync
    {
 
       //---------------------------------------------------------------
@@ -165,7 +165,7 @@ namespace TC
          m_table->setColumnText(4, "Destination Directory");
 
          // Initialize scrollable part of m_table
-         for(uint32 r=0; r<actions.size(); r++)
+         for(uint32 r=0; r<std::min(actions.size(), Actions::size_type(500)); r++)
          {
             ActionPtr action = actions[r];
             const FileInfo* source      = action->GetSource();
@@ -173,9 +173,9 @@ namespace TC
 
             m_table->setItem(r, 0, new CheckTableItem(m_table));
             m_table->setItemText(r, 1, action->GetActionString().c_str());
-            m_table->setItemText(r, 2, FileName::GetName(source->GetName()).c_str());
-            m_table->setItemText(r, 3, FileName::GetPath(source->GetName()).c_str());
-            m_table->setItemText(r, 4, destination ? FileName::GetPath(destination->GetName()).c_str() : "");
+            m_table->setItemText(r, 2, file_name::GetName(source->GetName()).c_str());
+            m_table->setItemText(r, 3, file_name::GetPath(source->GetName()).c_str());
+            m_table->setItemText(r, 4, destination ? file_name::GetPath(destination->GetName()).c_str() : "");
 
             m_table->setItemJustify(r, 1, FX::FXTableItem::LEFT);
             m_table->setItemJustify(r, 2, FX::FXTableItem::LEFT);

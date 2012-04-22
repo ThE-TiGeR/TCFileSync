@@ -44,9 +44,9 @@
 
 #include "TCNewEnable.h"
 
-namespace TC
+namespace tc
 {
-   namespace FileSync
+   namespace file_sync
    {
       Syncronizer::Syncronizer(const Settings& settings)
          :m_action_generator(settings),
@@ -70,6 +70,7 @@ namespace TC
 
          // find total bytes to process
          uint64 total_bytes = 0;
+         uint64 old_percent = 0;
          for (action_it=actions.begin(); action_it!=actions.end(); action_it++)
          {
             total_bytes += (*action_it)->GetBytesToSync();
@@ -79,12 +80,10 @@ namespace TC
          for (action_it=actions.begin(); action_it!=actions.end(); action_it++)
          {
             ActionPtr action = *action_it;
-            //TCINFOS("FileSync", action->GetInfo() << " ... ");
             if (!m_settings.info_mode)
             {
                if (!action->Do())
                {
-                  //TCERRORS("FileSync", action->GetInfo() << " failed !!!!!!!!!");
                   TCERRORS("FileSync", "-----------" << action->GetErrorMessage() << "-----------");
                   continue;
                }
@@ -92,8 +91,11 @@ namespace TC
 
             bytes_processed += (*action_it)->GetBytesToSync();
             uint64 percent = (100 * bytes_processed) / total_bytes;
-            TCINFOS("FileSync", percent << "% done.");
-            //TCINFOS("FileSync", action->GetInfo() << " done.");
+            if (old_percent != percent)
+            {
+               TCINFOS("FileSync", percent << "% done.");
+               old_percent = percent;
+            }
          }
          return true;
       }
