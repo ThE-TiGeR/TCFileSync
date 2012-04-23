@@ -4,25 +4,26 @@ project (TCFileSync)
 
 #-----------------------------------------------------------------------------
 # TCFileSync version number, useful for packaging and doxygen doc:
-set (TCSystem_VERSION_MAJOR 2)
-set (TCSystem_VERSION_MINOR 0)
-set (TCSystem_VERSION_PATCH 1)
+set (TCFileSync_VERSION_MAJOR 2)
+set (TCFileSync_VERSION_MINOR 0)
+set (TCFileSync_VERSION_PATCH 1)
 
-SET(TCSystem_VERSION
-  "${TCFileSync_VERSION_MAJOR}.${TCFileSync_VERSION_MINOR}.${TCFileSync_VERSION_PATCH}")
-SET(PACKAGE_VERSION
-  "${TCFileSync_VERSION_MAJOR}.${TCFileSync_VERSION_MINOR}.${TCFileSync_VERSION_PATCH}")
+set(TCFileSync_PROGRAM_NAME "TCFileSync")
+set(TCFileSync_VERSION "${TCFileSync_VERSION_MAJOR}.${TCFileSync_VERSION_MINOR}.${TCFileSync_VERSION_PATCH}")
+set(TCFileSync_AUTHOR "Thomas Goessler")
+set(TCFileSync_COMPANY "TCSystem")
+set(TCFileSync_COPYRIGHT "Copyright (c) 2003 - 2012")
   
-# This setting of SOVERSION assumes that any API change
-# will increment either the minor or major version number of openjpeg
-SET(TCFileSync_LIBRARY_PROPERTIES
-  VERSION   "${TCFileSync_VERSION_MAJOR}.${TCFileSync_VERSION_MINOR}.${TCFileSync_VERSION_PATCH}"
-  SOVERSION "${TCFileSync_VERSION_MAJOR}.${TCFileSync_VERSION_MINOR}"
-)
+configure_file (
+  ${PROJECT_SOURCE_DIR}/src/TCFileSyncVersion.h.in
+  ${PROJECT_BINARY_DIR}/TCFileSyncVersion.h
+  )
 
-SET(CPACK_PACKAGE_VERSION_MAJOR "${TCFileSync_VERSION_MAJOR}")
-SET(CPACK_PACKAGE_VERSION_MINOR "${TCFileSync_VERSION_MINOR}")
-SET(CPACK_PACKAGE_VERSION_PATCH "${TCFileSync_VERSION_PATCH}")
+
+set(PACKAGE_VERSION    "${TCFileSync_VERSION}")
+set(CPACK_PACKAGE_VERSION_MAJOR "${TCFileSync_VERSION_MAJOR}")
+set(CPACK_PACKAGE_VERSION_MINOR "${TCFileSync_VERSION_MINOR}")
+set(CPACK_PACKAGE_VERSION_PATCH "${TCFileSync_VERSION_PATCH}")
 include (CPack)
 
 set (CMAKE_MODULE_PATH ${TCFileSync_SOURCE_DIR}/TCSystem/cmake)
@@ -48,6 +49,7 @@ include_directories (
    TCSystem/Modules/GUI/inc
    ${FOX_INCLUDE_DIRS}
    ${Boost_INCLUDE_DIRS}
+   ${PROJECT_BINARY_DIR}
 )
 
 set (FILES
@@ -69,9 +71,10 @@ set (FILES
 	src/TCFileSyncSettings.h
 	src/TCFileSyncSyncronizer.cpp
 	src/TCFileSyncSyncronizer.h
-	src/TCFileSyncVersion.h
 	src/TCFileSyncWindow.cpp
 	src/TCFileSyncWindow.h
+	src/TCFileSyncVersion.h.in
+    ${PROJECT_BINARY_DIR}/TCFileSyncVersion.h
 )
 
 add_executable(TCFileSync ${FILES})

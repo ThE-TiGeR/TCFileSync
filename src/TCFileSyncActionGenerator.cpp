@@ -58,19 +58,16 @@ namespace tc
          if (!m_file_finder.Find()) return false;
 
          TCINFO("FileSync", "Finding missing destination files ...");
-         FileInfos missing_files = GetDifference(m_file_finder.GetSourceFiles(),
-            m_file_finder.GetDestinationFiles());
-         TCINFO("FileSync", "Finding missing destination files done.");
+         FileInfos missing_files = GetDifference(m_file_finder.GetSourceFiles(), m_file_finder.GetDestinationFiles());
+         TCINFOS("FileSync", "Found " << missing_files.size() << " missing destination files.");
 
          TCINFO("FileSync", "Finding deleted source files ...");
-         FileInfos deleted_files = GetDifference(m_file_finder.GetDestinationFiles(),
-            m_file_finder.GetSourceFiles());
-         TCINFO("FileSync", "Finding deleted source files done.");
+         FileInfos deleted_files = GetDifference(m_file_finder.GetDestinationFiles(), m_file_finder.GetSourceFiles());
+         TCINFOS("FileSync", "Found " << deleted_files.size() << " deleted source files.");
 
          TCINFO("FileSync", "Finding modified source files ...");
-         FileInfos modified_files = GetModifiedFiles(m_file_finder.GetSourceFiles(),
-            m_file_finder.GetDestinationFiles());
-         TCINFO("FileSync", "Finding modified source files done.");
+         FileInfos modified_files = GetModifiedFiles(m_file_finder.GetSourceFiles(), m_file_finder.GetDestinationFiles());
+         TCINFOS("FileSync", "Found " << modified_files.size() << " modified source files.");
 
          CreateMissingFileActions(missing_files);
          CreateDeletedFileActions(deleted_files);

@@ -36,6 +36,7 @@
 #define _TC_FILE_SYNC_SYNCHRONIZER_H_
 
 #include "TCFileSyncActionGenerator.h"
+#include "TCFileSyncStatusDisplayer.h"
 
 namespace tc
 {
@@ -49,7 +50,7 @@ namespace tc
 
          bool SetupSyncronisationData();
          const Actions& GetActions() const;
-         bool SyncDestination();
+         bool SyncDestination(StatusDisplayerPtr status_displayer);
 
       private:
          ActionGenerator m_action_generator;

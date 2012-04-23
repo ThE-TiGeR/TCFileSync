@@ -76,7 +76,7 @@ namespace tc
          file_info->second.SetDir(m_settings.source);
       }
 
-      TCINFO1("FileSync::FileFinder", "Searching source files in %s done.", m_settings.source.c_str());
+      TCINFOS("FileSync::FileFinder", "Found " << m_files_source.size() << " source files in " << m_settings.source);
       return true;
    }
 
@@ -99,8 +99,8 @@ namespace tc
       {
          file_info->second.SetDir(m_settings.destination);
       }
-
-      TCINFO1("FileSync::FileFinder", "Searching destination files in %s done.", m_settings.destination.c_str());
+      
+      TCINFOS("FileSync::FileFinder", "Found " << m_files_destination.size() << " destination files in " << m_settings.destination);
 
       m_settings = settings;
 
@@ -156,7 +156,7 @@ namespace tc
          }
 
          TCTRACE1("FileSync::FileFinder", 10, "Found file %s.", file_info.GetName().c_str());
-         files[file_info.GetName()] = file_info;
+         if (!file_info.IsDirectory()) files[file_info.GetName()] = file_info;
       }
 
       return true;

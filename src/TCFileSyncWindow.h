@@ -84,6 +84,8 @@ namespace tc
          long OnUpdSync(FX::FXObject*, FX::FXSelector, void*);
 
          virtual void create();
+
+         FX::FXList* GetInfoList() {return m_info_list;}
       protected:
          Window() {}
 
@@ -92,6 +94,8 @@ namespace tc
          Settings m_settings;
          FX::FXMenuPane* m_file_menu;
          FX::FXMenuPane* m_help_menu;
+         FX::FXList* m_info_list;
+         FX::FXProgressBar* m_progress_bar;
       };
    }
 }

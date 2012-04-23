@@ -69,6 +69,32 @@ namespace tc
          friend class multi_threading::LockerPtr< MTTraceTarget* >;
       };
 
+      class GuiTraceTarget: public output::PrintTarget
+      {
+      public:
+         GuiTraceTarget(FX::FXList* list)
+            :m_list(list)
+         {
+         }
+
+         virtual void Print(const char* text)
+         {
+            m_list->appendItem(text);
+            m_list->update();
+
+            while (m_list->getNumItems() > 50)
+            {
+               m_list->removeItem(0);
+               m_list->update();
+            }
+
+            m_list->makeItemVisible(m_list->getNumItems()-1);
+            m_list->update();
+         }
+      private:
+         FX::FXList* m_list;
+      };
+
       class GuiApplication: public gui::Application
       {
       public:
@@ -109,6 +135,12 @@ namespace tc
          {
             if (m_start_gui)
             {
+               output::PrintTargetPtr trace_target(new GuiTraceTarget(m_window->GetInfoList()));
+               output::SetErrorTarget(trace_target);
+               output::SetWarningTarget(trace_target);
+               output::SetInfoTarget(trace_target);
+               output::SetTraceTarget(trace_target);
+
                return gui::Application::Run();
             }
 
@@ -124,7 +156,7 @@ namespace tc
                TCERROR("FileSync", "Failed setting up synchronization data");
                return false;
             }
-            if (!syncronicer.SyncDestination())
+            if (!syncronicer.SyncDestination(StatusDisplayerPtr()))
             {
                TCERROR("FileSync", "Failed syncing directories");
                return false;

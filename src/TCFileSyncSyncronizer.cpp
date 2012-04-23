@@ -63,21 +63,24 @@ namespace tc
          return m_action_generator.CreateActions();
       }
 
-      bool Syncronizer::SyncDestination()
+      bool Syncronizer::SyncDestination(StatusDisplayerPtr status_displayer)
       {
-         Actions actions = m_action_generator.GetActions();
-         Actions::const_iterator action_it;
+         const Actions& actions = m_action_generator.GetActions();
+
+         TCINFOS("FileSync", "Syncing " << actions.size() << " destination files ...");
+
+         if (status_displayer) status_displayer->SetStatusText("Syncing destination");
 
          // find total bytes to process
          uint64 total_bytes = 0;
          uint64 old_percent = 0;
-         for (action_it=actions.begin(); action_it!=actions.end(); action_it++)
+         for (Actions::const_iterator action_it=actions.begin(); action_it!=actions.end(); action_it++)
          {
             total_bytes += (*action_it)->GetBytesToSync();
          }
 
          uint64 bytes_processed = 0;
-         for (action_it=actions.begin(); action_it!=actions.end(); action_it++)
+         for (Actions::const_iterator action_it=actions.begin(); action_it!=actions.end(); action_it++)
          {
             ActionPtr action = *action_it;
             if (!m_settings.info_mode)
@@ -90,13 +93,26 @@ namespace tc
             }
 
             bytes_processed += (*action_it)->GetBytesToSync();
-            uint64 percent = (100 * bytes_processed) / total_bytes;
-            if (old_percent != percent)
+
+            if (status_displayer)
             {
-               TCINFOS("FileSync", percent << "% done.");
-               old_percent = percent;
+               //TCINFOS("FileSync", (*action_it)->GetActionString() << " " << (*action_it)->GetSource()->GetName() << " -> " << (*action_it)->GetDestination()->GetName());
+               status_displayer->SetProgress(0, bytes_processed, total_bytes);
+            }
+            else
+            {
+               uint64 percent = (100 * bytes_processed) / total_bytes;
+               if (old_percent != percent)
+               {
+                  TCINFOS("FileSync", percent << "% done.");
+                  old_percent = percent;
+               }
             }
          }
+
+         if (status_displayer) status_displayer->SetStatusText("");
+         TCINFO("FileSync", "Syncing destination files done.");
+
          return true;
       }
 

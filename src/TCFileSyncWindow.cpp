@@ -83,7 +83,9 @@ namespace tc
          m_appl(appl),
          m_settings(settings),
          m_file_menu(0),
-         m_help_menu(0)
+         m_help_menu(0),
+         m_info_list(0),
+         m_progress_bar(0)
       {
          // Make menu bar
          FX::FXToolBarShell* drag_shell=new FX::FXToolBarShell(this, 0,0,0,0,0,0,0);
@@ -113,7 +115,10 @@ namespace tc
 
          FX::FXVerticalFrame* frame = new FX::FXVerticalFrame(this, FX::LAYOUT_FILL);
          new gui::Button(frame, "TC_FILE_SYNC_SYNCRONIZE", 0, this, ID_SYNC, FX::BUTTON_NORMAL|FX::LAYOUT_RIGHT);
+         m_progress_bar = new FX::FXProgressBar(frame, 0, 0,FX::PROGRESSBAR_PERCENTAGE|FX::LAYOUT_BOTTOM|FX::LAYOUT_FILL_X);
 
+         frame = new FX::FXVerticalFrame(frame, FX::LAYOUT_FILL|FX::FRAME_SUNKEN|FX::FRAME_GROOVE);
+         m_info_list = new FX::FXList(frame, 0, 0, FX::LIST_NORMAL|FX::LAYOUT_FILL|FX::FRAME_SUNKEN);
       }
 
       Window::~Window()
@@ -125,6 +130,7 @@ namespace tc
       void Window::create()
       {
          FX::FXMainWindow::create();
+         m_progress_bar->hide();
          show(FX::PLACEMENT_SCREEN);
       }
 
@@ -201,6 +207,37 @@ namespace tc
          return 0;
       }
 
+      class WindowProgressBarStatus: public StatusDisplayer
+      {
+      public:
+         WindowProgressBarStatus(FX::FXProgressBar* progress_bar)
+            :m_progress_bar(progress_bar)
+         {
+         }
+
+         virtual void SetStatusText(const std::string& status)
+         {
+            if (status.empty())
+            {
+               m_progress_bar->hide();
+            }
+            else
+            {
+               m_progress_bar->show();
+            }
+            m_progress_bar->setProgress(0);
+         }
+         virtual void SetProgress(uint64 start, uint64 current, uint64 end)
+         {
+            m_progress_bar->setTotal(FX::FXuint(end - start));
+            m_progress_bar->setProgress(FX::FXuint(current));
+            FX::FXApp::instance()->runWhileEvents();
+         }
+
+      private:
+         FX::FXProgressBar* m_progress_bar;
+      };
+
       long Window::OnCmdSync(FX::FXObject*, FX::FXSelector, void*)
       {
          Syncronizer syncronicer(m_settings);
@@ -210,14 +247,14 @@ namespace tc
             return 0;
          }
 
-         ActionWindow* aw = new ActionWindow(this, syncronicer.GetActions());
-         aw->create();
+//          ActionWindow* aw = new ActionWindow(this, syncronicer.GetActions());
+//          aw->create();
 
-//          if (!syncronicer.SyncDestination())
-//          {
-//             TCERROR("FileSync", "Failed syncing directories");
-//             return 0;
-//          }
+         if (!syncronicer.SyncDestination(StatusDisplayerPtr(new WindowProgressBarStatus(m_progress_bar))))
+         {
+            TCERROR("FileSync", "Failed syncing directories");
+            return 0;
+         }
 
          return 0;
       }
@@ -248,7 +285,9 @@ namespace tc
 
       long Window::OnUpdSync(FX::FXObject* obj, FX::FXSelector, void*)
       {
-         if (m_settings.source.empty() || m_settings.destination.empty())
+         if (m_settings.source.empty() || m_settings.destination.empty() ||
+             !file::IsDirectory(m_settings.source) ||
+             !file::IsDirectory(m_settings.destination))
          {
             obj->handle(this, MKUINT(FX::FXWindow::ID_DISABLE, FX::SEL_COMMAND), 0);
          }
