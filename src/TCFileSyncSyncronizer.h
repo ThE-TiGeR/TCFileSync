@@ -45,16 +45,17 @@ namespace tc
       class Syncronizer
       {
       public:
-         Syncronizer(const Settings& settings);
+         Syncronizer(const Settings& settings, StatusDisplayerPtr status_displayer);
          virtual ~Syncronizer();
 
          bool SetupSyncronisationData();
          const Actions& GetActions() const;
-         bool SyncDestination(StatusDisplayerPtr status_displayer);
+         bool SyncDestination();
 
       private:
          ActionGenerator m_action_generator;
          Settings m_settings;
+         StatusDisplayerPtr m_status_displayer;
       };
    }
 }

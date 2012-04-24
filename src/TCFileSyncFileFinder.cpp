@@ -156,7 +156,7 @@ namespace tc
          }
 
          TCTRACE1("FileSync::FileFinder", 10, "Found file %s.", file_info.GetName().c_str());
-         if (!file_info.IsDirectory()) files[file_info.GetName()] = file_info;
+         files[file_info.GetName()] = file_info;
       }
 
       return true;

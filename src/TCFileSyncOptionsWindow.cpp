@@ -49,6 +49,8 @@ namespace tc
       {
          FXMAPFUNC(FX::SEL_COMMAND, OptionsWindow::ID_PREVIEW, OptionsWindow::OnCmdPreview),
          FXMAPFUNC(FX::SEL_UPDATE,  OptionsWindow::ID_PREVIEW, OptionsWindow::OnUpdPreview),
+         FXMAPFUNC(FX::SEL_COMMAND, OptionsWindow::ID_CALC_CHECKSUM, OptionsWindow::OnCmdCalcChecksum),
+         FXMAPFUNC(FX::SEL_UPDATE,  OptionsWindow::ID_CALC_CHECKSUM, OptionsWindow::OnUpdCalcChecksum),
          FXMAPFUNC(FX::SEL_COMMAND, OptionsWindow::ID_NUM_BACKUPS, OptionsWindow::OnCmdNumBackups),
          FXMAPFUNC(FX::SEL_UPDATE,  OptionsWindow::ID_NUM_BACKUPS, OptionsWindow::OnUpdNumBackups),
          FXMAPFUNC(FX::SEL_COMMAND, OptionsWindow::ID_BACKUP_FOLDER, OptionsWindow::OnCmdBackupFolder),
@@ -67,6 +69,7 @@ namespace tc
 
          FX::FXHorizontalFrame* fh = new FX::FXHorizontalFrame(fv, FX::LAYOUT_FILL_X);
          new FX::FXCheckButton(fh, mls::Handler::GetText("TC_FILE_SYNC_PREVIEW").c_str(), this, ID_PREVIEW, FX::CHECKBUTTON_NORMAL | FX::LAYOUT_RIGHT);
+         new FX::FXCheckButton(fh, mls::Handler::GetText("Calculate Checksum").c_str(), this, ID_CALC_CHECKSUM, FX::CHECKBUTTON_NORMAL | FX::LAYOUT_RIGHT);
 
          fh = new FX::FXHorizontalFrame(fv, FX::LAYOUT_FILL_X);
          new gui::Label(fh, "TC_FILE_SYNC_NUM_BACKUPS");
@@ -87,6 +90,23 @@ namespace tc
       long OptionsWindow::OnUpdPreview(FX::FXObject *obj, FX::FXSelector /*sel*/, void* /*ptr*/)
       {
          FX::FXint val = m_settings.info_mode ? 1 : 0;
+         obj->handle(this, MKUINT(FX::FXWindow::ID_SETINTVALUE, FX::SEL_COMMAND), &val);
+
+         return 0;
+      }
+
+      long OptionsWindow::OnCmdCalcChecksum(FX::FXObject *obj, FX::FXSelector /*sel*/, void* /*ptr*/)
+      {
+         FX::FXint val = 0;
+         obj->handle(this, MKUINT(FX::FXWindow::ID_GETINTVALUE, FX::SEL_COMMAND), &val);
+
+         m_settings.calc_checksum = val ? true : false;
+         return 0;
+      }
+
+      long OptionsWindow::OnUpdCalcChecksum(FX::FXObject *obj, FX::FXSelector /*sel*/, void* /*ptr*/)
+      {
+         FX::FXint val = m_settings.calc_checksum ? 1 : 0;
          obj->handle(this, MKUINT(FX::FXWindow::ID_SETINTVALUE, FX::SEL_COMMAND), &val);
 
          return 0;

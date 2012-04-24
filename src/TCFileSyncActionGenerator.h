@@ -38,6 +38,7 @@
 #include "TCFileSyncActions.h"
 #include "TCFileSyncFileFinder.h"
 #include "TCFileSyncSettings.h"
+#include "TCFileSyncStatusDisplayer.h"
 
 namespace tc
 {
@@ -46,9 +47,9 @@ namespace tc
       class ActionGenerator
       {
       public:
-         ActionGenerator(const Settings& settings);
-         bool CreateActions();
+         ActionGenerator(const Settings& settings, StatusDisplayerPtr status_displayer);
 
+         bool CreateActions();
          const Actions& GetActions() const {return m_actions;}
 
       private:
@@ -64,9 +65,11 @@ namespace tc
 
          uint32 CreateBackupActionsForFile(const std::string& source_file_name);
 
+      private:
          FileFinder m_file_finder;
          Settings m_settings;
          Actions m_actions;
+         StatusDisplayerPtr m_status_displayer;
       };
    }
 }

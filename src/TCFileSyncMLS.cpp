@@ -58,6 +58,7 @@ namespace tc
          mls::Text("TC_FILE_SYNC_PREVIEW",         "en", "Preview"),
          mls::Text("TC_FILE_SYNC_NUM_BACKUPS",     "en", "Number of backups"),
          mls::Text("TC_FILE_SYNC_BACKUP_FOLDER",   "en", "Backup folder"),
+         mls::Text("Calculate Checksum",           "en", "Calculate Checksum")
       };
 
       mls::Texts m_tc_file_sync_gui_texts(util::ArraySize(m_tc_file_sync_gui_text_array),

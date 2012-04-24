@@ -45,6 +45,7 @@
 #include "TCGuiMenu.h"
 #include "TCOutput.h"
 #include "TCString.h"
+#include "TCTime.h"
 
 #include "TCNewEnable.h"
 
@@ -85,6 +86,7 @@ namespace tc
          m_file_menu(0),
          m_help_menu(0),
          m_info_list(0),
+         m_progress_label(0),
          m_progress_bar(0)
       {
          // Make menu bar
@@ -116,6 +118,7 @@ namespace tc
          FX::FXVerticalFrame* frame = new FX::FXVerticalFrame(this, FX::LAYOUT_FILL);
          new gui::Button(frame, "TC_FILE_SYNC_SYNCRONIZE", 0, this, ID_SYNC, FX::BUTTON_NORMAL|FX::LAYOUT_RIGHT);
          m_progress_bar = new FX::FXProgressBar(frame, 0, 0,FX::PROGRESSBAR_PERCENTAGE|FX::LAYOUT_BOTTOM|FX::LAYOUT_FILL_X);
+         m_progress_label = new FX::FXLabel(frame, "", 0 , FX::LABEL_NORMAL|FX::LAYOUT_BOTTOM|FX::LAYOUT_FILL_X);
 
          frame = new FX::FXVerticalFrame(frame, FX::LAYOUT_FILL|FX::FRAME_SUNKEN|FX::FRAME_GROOVE);
          m_info_list = new FX::FXList(frame, 0, 0, FX::LIST_NORMAL|FX::LAYOUT_FILL|FX::FRAME_SUNKEN);
@@ -130,6 +133,7 @@ namespace tc
       void Window::create()
       {
          FX::FXMainWindow::create();
+         m_progress_label->hide();
          m_progress_bar->hide();
          show(FX::PLACEMENT_SCREEN);
       }
@@ -210,8 +214,9 @@ namespace tc
       class WindowProgressBarStatus: public StatusDisplayer
       {
       public:
-         WindowProgressBarStatus(FX::FXProgressBar* progress_bar)
-            :m_progress_bar(progress_bar)
+         WindowProgressBarStatus(FX::FXLabel* label, FX::FXProgressBar* progress_bar)
+            :m_progress_label(label)
+            ,m_progress_bar(progress_bar)
          {
          }
 
@@ -219,28 +224,51 @@ namespace tc
          {
             if (status.empty())
             {
+               m_progress_label->hide();
                m_progress_bar->hide();
             }
             else
             {
+               m_progress_label->show();
                m_progress_bar->show();
             }
+            m_start_time = Time::NowMonotonic();
+
+            m_status_text = status;
+            m_last_time_update_percent = 0;
+            m_progress_label->setText(status.c_str());
             m_progress_bar->setProgress(0);
+            FX::FXApp::instance()->runWhileEvents();
          }
+
          virtual void SetProgress(uint64 start, uint64 current, uint64 end)
          {
+            double percent = current / double(end -start);
+            if (percent > m_last_time_update_percent + 0.01)
+            {
+               Time current_time = Time::SinceMonotonic(m_start_time);
+               Time remaining = Time::FromNanoSeconds(uint64(current_time.ToNanoSeconds() / percent * (1.0 - percent)));
+               std::string status_text = m_status_text + " remaining " + string::ToString(remaining.ToSeconds()) + " seconds";
+               m_progress_label->setText(status_text.c_str());
+               m_last_time_update_percent = percent;
+            }
+
             m_progress_bar->setTotal(FX::FXuint(end - start));
             m_progress_bar->setProgress(FX::FXuint(current));
             FX::FXApp::instance()->runWhileEvents();
          }
 
       private:
+         FX::FXLabel* m_progress_label;
          FX::FXProgressBar* m_progress_bar;
+         double m_last_time_update_percent;
+         std::string m_status_text;
+         Time m_start_time;
       };
 
       long Window::OnCmdSync(FX::FXObject*, FX::FXSelector, void*)
       {
-         Syncronizer syncronicer(m_settings);
+         Syncronizer syncronicer(m_settings, StatusDisplayerPtr(new WindowProgressBarStatus(m_progress_label, m_progress_bar)));
          if (!syncronicer.SetupSyncronisationData())
          {
             TCERROR("FileSync", "Failed setting up synchronization data");
@@ -250,7 +278,7 @@ namespace tc
 //          ActionWindow* aw = new ActionWindow(this, syncronicer.GetActions());
 //          aw->create();
 
-         if (!syncronicer.SyncDestination(StatusDisplayerPtr(new WindowProgressBarStatus(m_progress_bar))))
+         if (!syncronicer.SyncDestination())
          {
             TCERROR("FileSync", "Failed syncing directories");
             return 0;

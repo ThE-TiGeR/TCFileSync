@@ -48,9 +48,10 @@ namespace tc
 {
    namespace file_sync
    {
-      Syncronizer::Syncronizer(const Settings& settings)
-         :m_action_generator(settings),
-         m_settings(settings)
+      Syncronizer::Syncronizer(const Settings& settings, StatusDisplayerPtr status_displayer)
+         :m_action_generator(settings, status_displayer)
+         ,m_settings(settings)
+         ,m_status_displayer(status_displayer)
       {
       }
 
@@ -63,13 +64,13 @@ namespace tc
          return m_action_generator.CreateActions();
       }
 
-      bool Syncronizer::SyncDestination(StatusDisplayerPtr status_displayer)
+      bool Syncronizer::SyncDestination()
       {
          const Actions& actions = m_action_generator.GetActions();
 
          TCINFOS("FileSync", "Syncing " << actions.size() << " destination files ...");
 
-         if (status_displayer) status_displayer->SetStatusText("Syncing destination");
+         if (m_status_displayer) m_status_displayer->SetStatusText("Syncing destination");
 
          // find total bytes to process
          uint64 total_bytes = 0;
@@ -94,10 +95,10 @@ namespace tc
 
             bytes_processed += (*action_it)->GetBytesToSync();
 
-            if (status_displayer)
+            if (m_status_displayer)
             {
                //TCINFOS("FileSync", (*action_it)->GetActionString() << " " << (*action_it)->GetSource()->GetName() << " -> " << (*action_it)->GetDestination()->GetName());
-               status_displayer->SetProgress(0, bytes_processed, total_bytes);
+               m_status_displayer->SetProgress(0, bytes_processed, total_bytes);
             }
             else
             {
@@ -110,7 +111,7 @@ namespace tc
             }
          }
 
-         if (status_displayer) status_displayer->SetStatusText("");
+         if (m_status_displayer) m_status_displayer->SetStatusText("");
          TCINFO("FileSync", "Syncing destination files done.");
 
          return true;

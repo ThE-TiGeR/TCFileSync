@@ -56,6 +56,7 @@ namespace tc
          enum OptionsWindowFXIDs
          {
             ID_PREVIEW = gui::ActionBox::ID_LAST,
+            ID_CALC_CHECKSUM,
             ID_NUM_BACKUPS,
             ID_BACKUP_FOLDER,
             ID_FOLDERS_TO_SKIPP,
@@ -71,6 +72,8 @@ namespace tc
 
          long OnCmdPreview(FX::FXObject *obj, FX::FXSelector sel, void *ptr);
          long OnUpdPreview(FX::FXObject *obj, FX::FXSelector sel, void *ptr);
+         long OnCmdCalcChecksum(FX::FXObject *obj, FX::FXSelector sel, void *ptr);
+         long OnUpdCalcChecksum(FX::FXObject *obj, FX::FXSelector sel, void *ptr);
          long OnCmdNumBackups(FX::FXObject *obj, FX::FXSelector sel, void* ptr);
          long OnUpdNumBackups(FX::FXObject *obj, FX::FXSelector sel, void* ptr);
          long OnCmdBackupFolder(FX::FXObject *obj, FX::FXSelector sel, void* ptr);

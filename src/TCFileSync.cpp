@@ -90,6 +90,7 @@ namespace tc
 
             m_list->makeItemVisible(m_list->getNumItems()-1);
             m_list->update();
+            FX::FXApp::instance()->runWhileEvents();
          }
       private:
          FX::FXList* m_list;
@@ -150,13 +151,13 @@ namespace tc
             }
 
 
-            Syncronizer syncronicer(m_settings);
+            Syncronizer syncronicer(m_settings, StatusDisplayerPtr());
             if (!syncronicer.SetupSyncronisationData())
             {
                TCERROR("FileSync", "Failed setting up synchronization data");
                return false;
             }
-            if (!syncronicer.SyncDestination(StatusDisplayerPtr()))
+            if (!syncronicer.SyncDestination())
             {
                TCERROR("FileSync", "Failed syncing directories");
                return false;

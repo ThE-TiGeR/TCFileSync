@@ -95,6 +95,7 @@ namespace tc
          FX::FXMenuPane* m_file_menu;
          FX::FXMenuPane* m_help_menu;
          FX::FXList* m_info_list;
+         FX::FXLabel* m_progress_label;
          FX::FXProgressBar* m_progress_bar;
       };
    }

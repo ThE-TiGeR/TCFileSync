@@ -45,9 +45,10 @@ namespace tc
 {
    namespace file_sync
    {
-      ActionGenerator::ActionGenerator(const Settings& settings)
-         :m_file_finder(settings),
-         m_settings(settings)
+      ActionGenerator::ActionGenerator(const Settings& settings, StatusDisplayerPtr status_displayer)
+         :m_file_finder(settings)
+         ,m_settings(settings)
+         ,m_status_displayer(status_displayer)
       {
 
          m_settings.backup_folder = file_name::AddFileNameAndPath(settings.backup_folder, settings.destination);
@@ -65,9 +66,7 @@ namespace tc
          FileInfos deleted_files = GetDifference(m_file_finder.GetDestinationFiles(), m_file_finder.GetSourceFiles());
          TCINFOS("FileSync", "Found " << deleted_files.size() << " deleted source files.");
 
-         TCINFO("FileSync", "Finding modified source files ...");
          FileInfos modified_files = GetModifiedFiles(m_file_finder.GetSourceFiles(), m_file_finder.GetDestinationFiles());
-         TCINFOS("FileSync", "Found " << modified_files.size() << " modified source files.");
 
          CreateMissingFileActions(missing_files);
          CreateDeletedFileActions(deleted_files);
@@ -96,44 +95,63 @@ namespace tc
       FileInfos ActionGenerator::GetModifiedFiles(const FileInfos& files1,
          const FileInfos& files2)
       {
+         TCINFO("FileSync", "Finding modified source files ...");
+         if (m_status_displayer && m_settings.calc_checksum)
+         {
+            m_status_displayer->SetStatusText("Finding modified source files");
+         }
+
          FileInfos modified_files;
 
-         uint64 num_checked = 0;
-         uint64 total_files = files1.size();
-
          FileInfos::const_iterator file_it;
-         for (file_it=files1.begin(); file_it!=files1.end(); file_it++, ++num_checked)
+         uint64 total_bytes = 0;
+         for (file_it=files1.begin(); file_it!=files1.end(); ++file_it)
          {
-            const FileInfo& file = file_it->second;
+            const FileInfo& file_info = file_it->second;
+            total_bytes += file_info.GetFileSize();
+         }
+
+         uint64 bytes_done = 0;
+         for (file_it=files1.begin(); file_it!=files1.end(); ++file_it)
+         {
+            const FileInfo& file_info = file_it->second;
             // directories we do not need to check
-            if (file.IsDirectory())
+            if (file_info.IsDirectory())
             {
                continue;
             }
 
             FileInfos::const_iterator found_file;
-            found_file = files2.find(file.GetName());
+            found_file = files2.find(file_info.GetName());
             if (found_file != files2.end())
             {
-               if (file.GetLastModified() > found_file->second.GetLastModified())
+               if (file_info.GetLastModified() > found_file->second.GetLastModified())
                {
-                  modified_files[file.GetName()] = file;
+                  modified_files[file_info.GetName()] = file_info;
                }
                else if (m_settings.calc_checksum)
                {
-                  if ((num_checked % (total_files/100)) == 0)
+                  if (m_status_displayer)
                   {
-                     TCINFOS("FileSync", num_checked << "(" << total_files << ")");
+                     m_status_displayer->SetProgress(0, bytes_done, total_bytes);
                   }
 
-                  if (file.GetHashValue() != found_file->second.GetHashValue())
+                  if (file_info.GetHashValue() != found_file->second.GetHashValue())
                   {
-                     modified_files[file.GetName()] = file;
+                     modified_files[file_info.GetName()] = file_info;
                   }
                }
+
+               bytes_done += file_info.GetFileSize();
             }
          }
 
+         if (m_status_displayer)
+         {
+            m_status_displayer->SetStatusText("");
+         }
+
+         TCINFOS("FileSync", "Found " << modified_files.size() << " modified source files.");
          return modified_files;
       }
 
