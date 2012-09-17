@@ -165,7 +165,7 @@ namespace tc
          m_table->setColumnText(4, "Destination Directory");
 
          // Initialize scrollable part of m_table
-         for(uint32 r=0; r<std::min(actions.size(), Actions::size_type(500)); r++)
+         for(uint32_t r=0; r<std::min(actions.size(), Actions::size_type(500)); r++)
          {
             ActionPtr action = actions[r];
             const FileInfo* source      = action->GetSource();

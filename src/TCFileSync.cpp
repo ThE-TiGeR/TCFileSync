@@ -154,12 +154,12 @@ namespace tc
             Syncronizer syncronicer(m_settings, StatusDisplayerPtr());
             if (!syncronicer.SetupSyncronisationData())
             {
-               TCERROR("FileSync", "Failed setting up synchronization data");
+               TCERRORS("FileSync", "Failed setting up synchronization data");
                return false;
             }
             if (!syncronicer.SyncDestination())
             {
-               TCERROR("FileSync", "Failed syncing directories");
+               TCERRORS("FileSync", "Failed syncing directories");
                return false;
             }
 

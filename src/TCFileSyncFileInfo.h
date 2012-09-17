@@ -68,8 +68,8 @@ namespace tc
          void SetName(const std::string& name) {m_info.name = name;}
          void SetDir(const std::string& dir) {m_dir = dir;}
          bool IsDirectory() const {return m_info.is_directory;}
-         uint64 GetLastModified() const {return m_info.last_modified;}
-         uint64 GetFileSize() const {return m_info.file_size;}
+         uint64_t GetLastModified() const {return m_info.last_modified;}
+         uint64_t GetFileSize() const {return m_info.file_size;}
          const std::string& GetHashValue() const;
 
          bool CalculateHash() const;

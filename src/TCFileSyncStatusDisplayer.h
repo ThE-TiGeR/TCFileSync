@@ -45,7 +45,7 @@ namespace tc
       {
       public:
          virtual void SetStatusText(const std::string& status) = 0;
-         virtual void SetProgress(uint64 start, uint64 current, uint64 end) = 0;
+         virtual void SetProgress(uint64_t start, uint64_t current, uint64_t end) = 0;
 
          virtual ~StatusDisplayer() {}
       };

@@ -241,13 +241,13 @@ namespace tc
             FX::FXApp::instance()->runWhileEvents();
          }
 
-         virtual void SetProgress(uint64 start, uint64 current, uint64 end)
+         virtual void SetProgress(uint64_t start, uint64_t current, uint64_t end)
          {
             double percent = current / double(end -start);
             if (percent > m_last_time_update_percent + 0.01)
             {
                Time current_time = Time::SinceMonotonic(m_start_time);
-               Time remaining = Time::FromNanoSeconds(uint64(current_time.ToNanoSeconds() / percent * (1.0 - percent)));
+               Time remaining = Time::FromNanoSeconds(uint64_t(current_time.ToNanoSeconds() / percent * (1.0 - percent)));
                std::string status_text = m_status_text + " remaining " + string::ToString(remaining.ToSeconds()) + " seconds";
                m_progress_label->setText(status_text.c_str());
                m_last_time_update_percent = percent;
@@ -271,7 +271,7 @@ namespace tc
          Syncronizer syncronicer(m_settings, StatusDisplayerPtr(new WindowProgressBarStatus(m_progress_label, m_progress_bar)));
          if (!syncronicer.SetupSyncronisationData())
          {
-            TCERROR("FileSync", "Failed setting up synchronization data");
+            TCERRORS("FileSync", "Failed setting up synchronization data");
             return 0;
          }
 
@@ -280,7 +280,7 @@ namespace tc
 
          if (!syncronicer.SyncDestination())
          {
-            TCERROR("FileSync", "Failed syncing directories");
+            TCERRORS("FileSync", "Failed syncing directories");
             return 0;
          }
 

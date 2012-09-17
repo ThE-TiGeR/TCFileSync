@@ -58,11 +58,11 @@ namespace tc
       {
          if (!m_file_finder.Find()) return false;
 
-         TCINFO("FileSync", "Finding missing destination files ...");
+         TCINFOS("FileSync", "Finding missing destination files ...");
          FileInfos missing_files = GetDifference(m_file_finder.GetSourceFiles(), m_file_finder.GetDestinationFiles());
          TCINFOS("FileSync", "Found " << missing_files.size() << " missing destination files.");
 
-         TCINFO("FileSync", "Finding deleted source files ...");
+         TCINFOS("FileSync", "Finding deleted source files ...");
          FileInfos deleted_files = GetDifference(m_file_finder.GetDestinationFiles(), m_file_finder.GetSourceFiles());
          TCINFOS("FileSync", "Found " << deleted_files.size() << " deleted source files.");
 
@@ -95,7 +95,7 @@ namespace tc
       FileInfos ActionGenerator::GetModifiedFiles(const FileInfos& files1,
          const FileInfos& files2)
       {
-         TCINFO("FileSync", "Finding modified source files ...");
+         TCINFOS("FileSync", "Finding modified source files ...");
          if (m_status_displayer && m_settings.calc_checksum)
          {
             m_status_displayer->SetStatusText("Finding modified source files");
@@ -104,14 +104,14 @@ namespace tc
          FileInfos modified_files;
 
          FileInfos::const_iterator file_it;
-         uint64 total_bytes = 0;
+         uint64_t total_bytes = 0;
          for (file_it=files1.begin(); file_it!=files1.end(); ++file_it)
          {
             const FileInfo& file_info = file_it->second;
             total_bytes += file_info.GetFileSize();
          }
 
-         uint64 bytes_done = 0;
+         uint64_t bytes_done = 0;
          for (file_it=files1.begin(); file_it!=files1.end(); ++file_it)
          {
             const FileInfo& file_info = file_it->second;
@@ -172,15 +172,15 @@ namespace tc
          }
       }
 
-      uint32 ActionGenerator::CreateBackupActionsForFile(const std::string& source_file_name)
+      uint32_t ActionGenerator::CreateBackupActionsForFile(const std::string& source_file_name)
       {
          std::string ext         = file_name::GetExtension(source_file_name);
          std::string file_name   = file_name::RemoveExtension(source_file_name);
          std::string path        = file_name::GetPath(source_file_name);
 
-         uint32 backup_id = 1;
+         uint32_t backup_id = 1;
          Actions actions;
-         for (uint32 file_idx=m_settings.num_backups; file_idx>0 ; file_idx--)
+         for (uint32_t file_idx=m_settings.num_backups; file_idx>0 ; file_idx--)
          {
             std::string backup_id1 = "$" + string::ToString(file_idx) + "$";
             std::string file_name1 = file_name::AddFileNameAndExtension(file_name, backup_id1);
@@ -237,7 +237,7 @@ namespace tc
 
             if (m_settings.num_backups > 0)
             {
-               uint32 backup_id = CreateBackupActionsForFile(file_info_it->second.GetName());
+               uint32_t backup_id = CreateBackupActionsForFile(file_info_it->second.GetName());
 
                std::string ext         = file_name::GetExtension(file_info_it->second.GetName());
                std::string file_name   = file_name::RemoveExtension(file_info_it->second.GetName());
@@ -269,7 +269,7 @@ namespace tc
             }
             else
             {
-               uint32 backup_id = CreateBackupActionsForFile(file_info_it->second.GetName());
+               uint32_t backup_id = CreateBackupActionsForFile(file_info_it->second.GetName());
 
                std::string ext         = file_name::GetExtension(file_info_it->second.GetName());
                std::string file_name   = file_name::RemoveExtension(file_info_it->second.GetName());

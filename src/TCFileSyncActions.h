@@ -51,7 +51,7 @@ namespace tc
          virtual const std::string& GetActionString() const = 0;
          virtual const FileInfo* GetSource() const = 0;
          virtual const FileInfo* GetDestination() const = 0;
-         virtual uint64 GetBytesToSync() const = 0;
+         virtual uint64_t GetBytesToSync() const = 0;
 
          virtual const std::string& GetErrorMessage() const = 0;
 

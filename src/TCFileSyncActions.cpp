@@ -98,7 +98,7 @@ namespace tc
          {
             return &m_destination;
          }
-         virtual uint64 GetBytesToSync() const
+         virtual uint64_t GetBytesToSync() const
          {
             return m_source.GetFileSize();
          }
@@ -149,7 +149,7 @@ namespace tc
          {
             return 0;
          }
-         virtual uint64 GetBytesToSync() const
+         virtual uint64_t GetBytesToSync() const
          {
             return 1;
          }
@@ -186,7 +186,7 @@ namespace tc
          {
             return &m_destination;
          }
-         virtual uint64 GetBytesToSync() const
+         virtual uint64_t GetBytesToSync() const
          {
             return 1;
          }
@@ -231,7 +231,7 @@ namespace tc
          {
             return 0;
          }
-         virtual uint64 GetBytesToSync() const
+         virtual uint64_t GetBytesToSync() const
          {
             return 1;
          }

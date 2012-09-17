@@ -73,14 +73,14 @@ namespace tc
          if (m_status_displayer) m_status_displayer->SetStatusText("Syncing destination");
 
          // find total bytes to process
-         uint64 total_bytes = 0;
-         uint64 old_percent = 0;
+         uint64_t total_bytes = 0;
+         uint64_t old_percent = 0;
          for (Actions::const_iterator action_it=actions.begin(); action_it!=actions.end(); action_it++)
          {
             total_bytes += (*action_it)->GetBytesToSync();
          }
 
-         uint64 bytes_processed = 0;
+         uint64_t bytes_processed = 0;
          for (Actions::const_iterator action_it=actions.begin(); action_it!=actions.end(); action_it++)
          {
             ActionPtr action = *action_it;
@@ -102,7 +102,7 @@ namespace tc
             }
             else
             {
-               uint64 percent = (100 * bytes_processed) / total_bytes;
+               uint64_t percent = (100 * bytes_processed) / total_bytes;
                if (old_percent != percent)
                {
                   TCINFOS("FileSync", percent << "% done.");
@@ -112,7 +112,7 @@ namespace tc
          }
 
          if (m_status_displayer) m_status_displayer->SetStatusText("");
-         TCINFO("FileSync", "Syncing destination files done.");
+         TCINFOS("FileSync", "Syncing destination files done.");
 
          return true;
       }

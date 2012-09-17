@@ -53,7 +53,7 @@ namespace tc
          std::string source;
          std::string destination;
 
-         uint32 num_backups;
+         uint32_t num_backups;
          std::string backup_folder;
 
          std::set< std::string > folders_to_skipp;

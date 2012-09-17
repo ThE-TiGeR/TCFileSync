@@ -64,7 +64,7 @@ namespace tc
 
    bool file_sync::FileFinder::FindSourceFiles()
    {
-      TCINFO1("FileSync::FileFinder", "Searching source files in %s ...", m_settings.source.c_str());
+      TCINFOS("FileSync::FileFinder", "Searching source files in " << m_settings.source << " ...");
 
       m_files_source.clear();
       if (!file::ChangeDirectory(m_settings.source)) return false;
@@ -82,7 +82,7 @@ namespace tc
 
    bool file_sync::FileFinder::FindDestinationFiles()
    {
-      TCINFO1("FileSync::FileFinder", "Searching destination files in %s ...", m_settings.destination.c_str());
+      TCINFOS("FileSync::FileFinder", "Searching destination files in " << m_settings.destination << " ...");
 
       // reset setting for destination search because we have to find all
       file_sync::Settings settings = m_settings;
@@ -155,7 +155,7 @@ namespace tc
             }
          }
 
-         TCTRACE1("FileSync::FileFinder", 10, "Found file %s.", file_info.GetName().c_str());
+         TCTRACES("FileSync::FileFinder", 10, "Found file " << file_info.GetName() << ".");
          files[file_info.GetName()] = file_info;
       }
 
