@@ -2,4 +2,4 @@ TCSystem = TCSystemPath
 
 [subpaths]
 TCSystemPath = ../TCSystem
-https://bitbucket.org/the____tiger/TCSystem = https://bitbucket.org/the____tiger/tcsystem
+https://bitbucket.org/the____tiger/tcfilesync/../TCSystem = https://bitbucket.org/the____tiger/tcsystem
