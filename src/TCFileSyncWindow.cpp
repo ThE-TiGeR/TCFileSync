@@ -243,18 +243,15 @@ namespace tc
 
          virtual void SetProgress(uint64_t start, uint64_t current, uint64_t end)
          {
-            double percent = current / double(end -start);
-            if (percent > m_last_time_update_percent + 0.01)
-            {
-               Time current_time = Time::SinceMonotonic(m_start_time);
-               Time remaining = Time::FromNanoSeconds(uint64_t(current_time.ToNanoSeconds() / percent * (1.0 - percent)));
-               std::string status_text = m_status_text + " remaining " + string::ToString(remaining.ToSeconds()) + " seconds";
-               m_progress_label->setText(status_text.c_str());
-               m_last_time_update_percent = percent;
-            }
+            double percent = double(current) / double(end - start);
 
-            m_progress_bar->setTotal(FX::FXuint(end - start));
-            m_progress_bar->setProgress(FX::FXuint(current));
+            Time current_time = Time::SinceMonotonic(m_start_time);
+            Time remaining = Time::FromNanoSeconds(uint64_t(double(current_time.ToNanoSeconds()) / percent * (1.0 - percent)));
+            std::string status_text = m_status_text + " remaining " + string::ToString(remaining.ToSeconds()) + " seconds";
+            m_progress_label->setText(status_text.c_str());
+
+            m_progress_bar->setTotal(1000);
+            m_progress_bar->setProgress(FX::FXuint(percent*1000));
             FX::FXApp::instance()->runWhileEvents();
          }
 
