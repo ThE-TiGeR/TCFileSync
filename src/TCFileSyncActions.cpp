@@ -30,7 +30,7 @@
 // License along with this library; if not, write to the Free Software       
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 //*******************************************************************************
-//  $Id$
+//  $Id: TCFileSyncActions.cpp,v 5121974dd9eb 2012/09/17 19:34:55 thomas $
 //*******************************************************************************
 #include "TCFileSyncActions.h"
 
@@ -121,7 +121,7 @@ namespace tc
 
             if (!file::Copy(m_source.GetName(), m_destination.GetName()))
             {
-               SetErrorString(system::GetLastErrorMessage());
+               SetErrorString(system::GetLastErrorMessage() + "\n" + m_source.GetName() + "\n" + m_destination.GetName());
                return false;
             }
 
