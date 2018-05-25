@@ -46,80 +46,79 @@
 
 namespace tc
 {
-   namespace file_sync
-   {
-      Syncronizer::Syncronizer(const Settings& settings, StatusDisplayerPtr status_displayer)
-         :m_action_generator(settings, status_displayer)
-         ,m_settings(settings)
-         ,m_status_displayer(status_displayer)
-      {
-      }
+    namespace file_sync
+    {
+        Syncronizer::Syncronizer(const Settings& settings, StatusDisplayerPtr status_displayer)
+            :m_action_generator(settings, status_displayer)
+            , m_settings(settings)
+            , m_status_displayer(status_displayer)
+        {
+        }
 
-      Syncronizer::~Syncronizer()
-      {
-      }
+        Syncronizer::~Syncronizer()
+        {
+        }
 
-      bool Syncronizer::SetupSyncronisationData()
-      {
-         return m_action_generator.CreateActions();
-      }
+        bool Syncronizer::SetupSyncronisationData()
+        {
+            return m_action_generator.CreateActions();
+        }
 
-      bool Syncronizer::SyncDestination()
-      {
-         const Actions& actions = m_action_generator.GetActions();
+        bool Syncronizer::SyncDestination()
+        {
+            const Actions& actions = m_action_generator.GetActions();
 
-         TCINFOS("FileSync", "Syncing " << actions.size() << " destination files ...");
+            TCINFOS("FileSync", "Syncing " << actions.size() << " destination files ...");
 
-         if (m_status_displayer) m_status_displayer->SetStatusText("Syncing destination");
+            if (m_status_displayer) m_status_displayer->SetStatusText("Syncing destination");
 
-         // find total bytes to process
-         uint64_t total_bytes = 0;
-         uint64_t old_percent = 0;
-         for (Actions::const_iterator action_it=actions.begin(); action_it!=actions.end(); action_it++)
-         {
-            total_bytes += (*action_it)->GetBytesToSync();
-         }
-
-         uint64_t bytes_processed = 0;
-         for (Actions::const_iterator action_it=actions.begin(); action_it!=actions.end(); action_it++)
-         {
-            ActionPtr action = *action_it;
-            if (!m_settings.info_mode)
+            // find total bytes to process
+            uint64_t total_bytes = 0;
+            uint64_t old_percent = 0;
+            for (const auto& action : actions)
             {
-               if (!action->Do())
-               {
-                  TCERRORS("FileSync", "-----------" << action->GetErrorMessage() << "-----------");
-                  continue;
-               }
+                total_bytes += action->GetBytesToSync();
             }
 
-            bytes_processed += (*action_it)->GetBytesToSync();
-
-            if (m_status_displayer)
+            uint64_t bytes_processed = 0;
+            for (auto action : actions)
             {
-               //TCINFOS("FileSync", (*action_it)->GetActionString() << " " << (*action_it)->GetSource()->GetName() << " -> " << (*action_it)->GetDestination()->GetName());
-               m_status_displayer->SetProgress(0, bytes_processed, total_bytes);
+                if (!m_settings.info_mode)
+                {
+                    if (!action->Do())
+                    {
+                        TCERRORS("FileSync", "-----------" << action->GetErrorMessage() << "-----------");
+                        continue;
+                    }
+                }
+
+                bytes_processed += action->GetBytesToSync();
+
+                if (m_status_displayer)
+                {
+                    //TCINFOS("FileSync", (*action_it)->GetActionString() << " " << (*action_it)->GetSource()->GetName() << " -> " << (*action_it)->GetDestination()->GetName());
+                    m_status_displayer->SetProgress(0, bytes_processed, total_bytes);
+                }
+                else
+                {
+                    uint64_t percent = (100 * bytes_processed) / total_bytes;
+                    if (old_percent != percent)
+                    {
+                        TCINFOS("FileSync", percent << "% done.");
+                        old_percent = percent;
+                    }
+                }
             }
-            else
-            {
-               uint64_t percent = (100 * bytes_processed) / total_bytes;
-               if (old_percent != percent)
-               {
-                  TCINFOS("FileSync", percent << "% done.");
-                  old_percent = percent;
-               }
-            }
-         }
 
-         if (m_status_displayer) m_status_displayer->SetStatusText("");
-         TCINFOS("FileSync", "Syncing destination files done.");
+            if (m_status_displayer) m_status_displayer->SetStatusText("");
+            TCINFOS("FileSync", "Syncing destination files done.");
 
-         return true;
-      }
+            return true;
+        }
 
-      const Actions& Syncronizer::GetActions() const
-      {
-         return m_action_generator.GetActions();
-      }
-   }
+        const Actions& Syncronizer::GetActions() const
+        {
+            return m_action_generator.GetActions();
+        }
+    }
 }

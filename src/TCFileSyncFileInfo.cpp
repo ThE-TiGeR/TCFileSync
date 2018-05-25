@@ -43,37 +43,37 @@
 
 namespace tc
 {
-   namespace file_sync
-   {
-      bool FileInfo::CalculateHash() const
-      {
-         MemoryMappedFilePtr file = factory::CreateMemoryMappedFile(GetFullName(), true);
-         if (!file)
-         {
-            return false;
-         }
+    namespace file_sync
+    {
+        bool FileInfo::CalculateHash() const
+        {
+            MemoryMappedFilePtr file = factory::CreateMemoryMappedFile(GetFullName(), true);
+            if (!file)
+            {
+                return false;
+            }
 
-         math::ChecksumPtr checksum = math::factory::CreateMD5Checksum();
-         checksum->Append(file->GetReadOnlyData(), file->GetSize());
+            math::ChecksumPtr checksum = math::factory::CreateMD5Checksum();
+            checksum->Append(file->GetReadOnlyData(), file->GetSize());
 
-         m_hash = checksum->GetHashString();
+            m_hash = checksum->GetHashString();
 
-         return true;
-      }
+            return true;
+        }
 
-      const std::string& FileInfo::GetHashValue() const
-      {
-         if (m_hash.empty())
-         {
-            CalculateHash();
-         }
-         return m_hash;
-      }
+        const std::string& FileInfo::GetHashValue() const
+        {
+            if (m_hash.empty())
+            {
+                CalculateHash();
+            }
+            return m_hash;
+        }
 
-      std::string FileInfo::GetFullName() const
-      {
-         return file_name::AddFileNameAndPath(m_info.name, m_dir);
-      }
-   }
+        std::string FileInfo::GetFullName() const
+        {
+            return file_name::AddFileNameAndPath(m_info.name, m_dir);
+        }
+    }
 }
 

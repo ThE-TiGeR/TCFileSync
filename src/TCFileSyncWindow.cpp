@@ -83,11 +83,11 @@ namespace tc
          FX::DECOR_ALL, 500, 50, 400, 0, 0, 0),
          m_appl(appl),
          m_settings(settings),
-         m_file_menu(0),
-         m_help_menu(0),
-         m_info_list(0),
-         m_progress_label(0),
-         m_progress_bar(0)
+         m_file_menu(nullptr),
+         m_help_menu(nullptr),
+         m_info_list(nullptr),
+         m_progress_label(nullptr),
+         m_progress_bar(nullptr)
       {
          // Make menu bar
          FX::FXToolBarShell* drag_shell=new FX::FXToolBarShell(this, 0,0,0,0,0,0,0);
@@ -96,32 +96,32 @@ namespace tc
 
          // file menu
          m_file_menu = new FX::FXMenuPane(this);
-         new gui::MenuTitle(menu_bar, "TC_FILE_SYNC_FILE", 0, m_file_menu);
-         new gui::MenuCommand(m_file_menu, "TC_FILE_SYNC_OPTIONS", 0, this, ID_OPTIONS);
-         new gui::MenuCommand(m_file_menu, "TC_FILE_SYNC_EXIT", 0, this, ID_QUIT);
+         new gui::MenuTitle(menu_bar, "TC_FILE_SYNC_FILE", nullptr, m_file_menu);
+         new gui::MenuCommand(m_file_menu, "TC_FILE_SYNC_OPTIONS", nullptr, this, ID_OPTIONS);
+         new gui::MenuCommand(m_file_menu, "TC_FILE_SYNC_EXIT", nullptr, this, ID_QUIT);
 
          // Help menu
          m_help_menu = new FX::FXMenuPane(this);
-         new gui::MenuTitle(menu_bar, "TC_FILE_SYNC_HELP", 0, m_help_menu);
-         new gui::MenuCommand(m_help_menu, "TC_FILE_SYNC_ABOUT", 0, this, ID_ABOUT);
+         new gui::MenuTitle(menu_bar, "TC_FILE_SYNC_HELP", nullptr, m_help_menu);
+         new gui::MenuCommand(m_help_menu, "TC_FILE_SYNC_ABOUT", nullptr, this, ID_ABOUT);
 
          FX::FXMatrix* matrix = new FX::FXMatrix(this, 3, FX::MATRIX_BY_COLUMNS|FX::LAYOUT_FILL_X);
          
          new gui::Label(matrix, "TC_FILE_SYNC_SOURCE");
          new FX::FXTextField(matrix, 20, this, ID_SOURCE_DIR, FX::TEXTFIELD_NORMAL|FX::LAYOUT_FILL_X|FX::LAYOUT_FILL_COLUMN);
-         new gui::Button(matrix, "...", 0, this, ID_SEL_SOURCE_DIR);
+         new gui::Button(matrix, "...", nullptr, this, ID_SEL_SOURCE_DIR);
 
          new gui::Label(matrix, "TC_FILE_SYNC_TARGET");
          new FX::FXTextField(matrix, 20, this, ID_TARGET_DIR, FX::TEXTFIELD_NORMAL|FX::LAYOUT_FILL_X|FX::LAYOUT_FILL_COLUMN);
-         new gui::Button(matrix, "...", 0, this, ID_SEL_TARGET_DIR);
+         new gui::Button(matrix, "...", nullptr, this, ID_SEL_TARGET_DIR);
 
          FX::FXVerticalFrame* frame = new FX::FXVerticalFrame(this, FX::LAYOUT_FILL);
-         new gui::Button(frame, "TC_FILE_SYNC_SYNCRONIZE", 0, this, ID_SYNC, FX::BUTTON_NORMAL|FX::LAYOUT_RIGHT);
-         m_progress_bar = new FX::FXProgressBar(frame, 0, 0,FX::PROGRESSBAR_PERCENTAGE|FX::LAYOUT_BOTTOM|FX::LAYOUT_FILL_X);
-         m_progress_label = new FX::FXLabel(frame, "", 0 , FX::LABEL_NORMAL|FX::LAYOUT_BOTTOM|FX::LAYOUT_FILL_X);
+         new gui::Button(frame, "TC_FILE_SYNC_SYNCRONIZE", nullptr, this, ID_SYNC, FX::BUTTON_NORMAL|FX::LAYOUT_RIGHT);
+         m_progress_bar = new FX::FXProgressBar(frame, nullptr, 0,FX::PROGRESSBAR_PERCENTAGE|FX::LAYOUT_BOTTOM|FX::LAYOUT_FILL_X);
+         m_progress_label = new FX::FXLabel(frame, "", nullptr, FX::LABEL_NORMAL|FX::LAYOUT_BOTTOM|FX::LAYOUT_FILL_X);
 
          frame = new FX::FXVerticalFrame(frame, FX::LAYOUT_FILL|FX::FRAME_SUNKEN|FX::FRAME_GROOVE);
-         m_info_list = new FX::FXList(frame, 0, 0, FX::LIST_NORMAL|FX::LAYOUT_FILL|FX::FRAME_SUNKEN);
+         m_info_list = new FX::FXList(frame, nullptr, 0, FX::LIST_NORMAL|FX::LAYOUT_FILL|FX::FRAME_SUNKEN);
       }
 
       Window::~Window()
@@ -220,7 +220,7 @@ namespace tc
          {
          }
 
-         virtual void SetStatusText(const std::string& status)
+         void SetStatusText(const std::string& status) override
          {
             if (status.empty())
             {
@@ -241,7 +241,7 @@ namespace tc
             FX::FXApp::instance()->runWhileEvents();
          }
 
-         virtual void SetProgress(uint64_t start, uint64_t current, uint64_t end)
+         void SetProgress(uint64_t start, uint64_t current, uint64_t end) override
          {
             double percent = double(current) / double(end - start);
 
@@ -314,11 +314,11 @@ namespace tc
              !file::IsDirectory(m_settings.source) ||
              !file::IsDirectory(m_settings.destination))
          {
-            obj->handle(this, MKUINT(FX::FXWindow::ID_DISABLE, FX::SEL_COMMAND), 0);
+            obj->handle(this, MKUINT(FX::FXWindow::ID_DISABLE, FX::SEL_COMMAND), nullptr);
          }
          else
          {
-            obj->handle(this, MKUINT(FX::FXWindow::ID_ENABLE, FX::SEL_COMMAND), 0);
+            obj->handle(this, MKUINT(FX::FXWindow::ID_ENABLE, FX::SEL_COMMAND), nullptr);
          }
          return 0;
       }

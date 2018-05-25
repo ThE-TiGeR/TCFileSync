@@ -41,27 +41,27 @@
 
 namespace tc
 {
-   namespace file_sync
-   {
-      mls::Text m_tc_file_sync_gui_text_array[] =
-      {
-         mls::Text("TC_FILE_SYNC_FILE",           "en", "&File"),
-         mls::Text("TC_FILE_SYNC_EXIT",           "en", "&Leave\tAlt-F4"),
-         mls::Text("TC_FILE_SYNC_OPTIONS",        "en", "&Options"),
-         mls::Text("TC_FILE_SYNC_HELP",           "en", "&?"),
-         mls::Text("TC_FILE_SYNC_ABOUT",          "en", "&About"),
+    namespace file_sync
+    {
+        mls::Text m_tc_file_sync_gui_text_array[] =
+        {
+           mls::Text("TC_FILE_SYNC_FILE",           "en", "&File"),
+           mls::Text("TC_FILE_SYNC_EXIT",           "en", "&Leave\tAlt-F4"),
+           mls::Text("TC_FILE_SYNC_OPTIONS",        "en", "&Options"),
+           mls::Text("TC_FILE_SYNC_HELP",           "en", "&?"),
+           mls::Text("TC_FILE_SYNC_ABOUT",          "en", "&About"),
 
-         mls::Text("TC_FILE_SYNC_SOURCE",          "en", "Source:"),
-         mls::Text("TC_FILE_SYNC_TARGET",          "en", "Target:"),
-         mls::Text("TC_FILE_SYNC_SYNCRONIZE",      "en", "Start Sync"),
+           mls::Text("TC_FILE_SYNC_SOURCE",          "en", "Source:"),
+           mls::Text("TC_FILE_SYNC_TARGET",          "en", "Target:"),
+           mls::Text("TC_FILE_SYNC_SYNCRONIZE",      "en", "Start Sync"),
 
-         mls::Text("TC_FILE_SYNC_PREVIEW",         "en", "Preview"),
-         mls::Text("TC_FILE_SYNC_NUM_BACKUPS",     "en", "Number of backups"),
-         mls::Text("TC_FILE_SYNC_BACKUP_FOLDER",   "en", "Backup folder"),
-         mls::Text("Calculate Checksum",           "en", "Calculate Checksum")
-      };
+           mls::Text("TC_FILE_SYNC_PREVIEW",         "en", "Preview"),
+           mls::Text("TC_FILE_SYNC_NUM_BACKUPS",     "en", "Number of backups"),
+           mls::Text("TC_FILE_SYNC_BACKUP_FOLDER",   "en", "Backup folder"),
+           mls::Text("Calculate Checksum",           "en", "Calculate Checksum")
+        };
 
-      mls::Texts m_tc_file_sync_gui_texts(util::ArraySize(m_tc_file_sync_gui_text_array),
-         m_tc_file_sync_gui_text_array);
-   }
+        mls::Texts m_tc_file_sync_gui_texts(util::ArraySize(m_tc_file_sync_gui_text_array),
+            m_tc_file_sync_gui_text_array);
+    }
 }

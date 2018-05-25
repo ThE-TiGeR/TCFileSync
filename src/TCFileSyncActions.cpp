@@ -45,229 +45,229 @@
 
 namespace tc
 {
-   namespace file_sync
-   {
+    namespace file_sync
+    {
 
-      class ActionBase: public Action
-      {
-      public:
-         ActionBase(const std::string& action_string)
-            :m_error()
-            ,m_action_string(action_string)
-         {
-         }
-         virtual const std::string& GetActionString() const
-         {
-            return m_action_string;
-         }
-
-         virtual const std::string& GetErrorMessage() const
-         {
-            return m_error;
-         }
-
-         virtual ~ActionBase() {}
-
-      protected:
-         void SetErrorString(const std::string& error)
-         {
-            m_error = error;
-         }
-
-      private:
-         std::string m_error;
-         std::string m_action_string;
-      };
-
-
-      
-      class CopyAction: public ActionBase
-      {
-      public:
-         CopyAction(const FileInfo& source, const FileInfo& destination)
-            :ActionBase("Copy")
-            ,m_source(source)
-            ,m_destination(destination)
-         {
-         }
-         virtual const FileInfo* GetSource() const
-         {
-            return &m_source;
-         }
-         virtual const FileInfo* GetDestination() const
-         {
-            return &m_destination;
-         }
-         virtual uint64_t GetBytesToSync() const
-         {
-            return m_source.GetFileSize();
-         }
-
-
-         virtual bool Do()
-         {
-            std::string dir_name = file_name::GetPath(m_destination.GetName());
-            if (!file::IsDirectory(dir_name) &&
-               !file::CreateDirRecursive(dir_name))
+        class ActionBase : public Action
+        {
+        public:
+            ActionBase(const std::string& action_string)
+                :m_error()
+                , m_action_string(action_string)
             {
-               SetErrorString(system::GetLastErrorMessage());
-               return false;
+            }
+            const std::string& GetActionString() const override
+            {
+                return m_action_string;
             }
 
-            if (file::Exists(m_destination.GetName()))
+            const std::string& GetErrorMessage() const override
             {
-               file::SetFileAttr(m_destination.GetName(), file::WRITE);
+                return m_error;
             }
 
-            if (!file::Copy(m_source.GetName(), m_destination.GetName()))
+            virtual ~ActionBase() {}
+
+        protected:
+            void SetErrorString(const std::string& error)
             {
-               SetErrorString(system::GetLastErrorMessage() + "\n" + m_source.GetName() + "\n" + m_destination.GetName());
-               return false;
+                m_error = error;
             }
 
-            return true;
-         }
+        private:
+            std::string m_error;
+            std::string m_action_string;
+        };
 
-      private:
-         FileInfo m_source;
-         FileInfo m_destination;
-      };
 
-      class CreateDirectoryAction: public ActionBase
-      {
-      public:
-         CreateDirectoryAction(const FileInfo& directory)
-            :ActionBase("Create Directory")
-            ,m_directory(directory)
-         {
-         }
-         virtual const FileInfo* GetSource() const
-         {
-            return &m_directory;
-         }
-         virtual const FileInfo* GetDestination() const
-         {
-            return 0;
-         }
-         virtual uint64_t GetBytesToSync() const
-         {
-            return 1;
-         }
 
-         virtual bool Do()
-         {
-            if (!file::CreateDirRecursive(m_directory.GetName()))
+        class CopyAction : public ActionBase
+        {
+        public:
+            CopyAction(const FileInfo& source, const FileInfo& destination)
+                :ActionBase("Copy")
+                , m_source(source)
+                , m_destination(destination)
             {
-               SetErrorString(system::GetLastErrorMessage());
-               return false;
+            }
+            const FileInfo* GetSource() const override
+            {
+                return &m_source;
+            }
+            const FileInfo* GetDestination() const override
+            {
+                return &m_destination;
+            }
+            uint64_t GetBytesToSync() const override
+            {
+                return m_source.GetFileSize();
             }
 
-            return true;
-         }
 
-      private:
-         FileInfo m_directory;
-      };
-
-      class MoveAction: public ActionBase
-      {
-      public:
-         MoveAction(const FileInfo& source, const FileInfo& destination)
-            :ActionBase("Move")
-            ,m_source(source)
-            ,m_destination(destination)
-         {
-         }
-         virtual const FileInfo* GetSource() const
-         {
-            return &m_source;
-         }
-         virtual const FileInfo* GetDestination() const
-         {
-            return &m_destination;
-         }
-         virtual uint64_t GetBytesToSync() const
-         {
-            return 1;
-         }
-
-         virtual bool Do()
-         {
-            std::string dir_name = file_name::GetPath(m_destination.GetName());
-            if (!file::IsDirectory(dir_name) &&
-               !file::CreateDirRecursive(dir_name))
+            bool Do() override
             {
-               SetErrorString(system::GetLastErrorMessage());
-               return false;
+                std::string dir_name = file_name::GetPath(m_destination.GetName());
+                if (!file::IsDirectory(dir_name) &&
+                    !file::CreateDirRecursive(dir_name))
+                {
+                    SetErrorString(system::GetLastErrorMessage());
+                    return false;
+                }
+
+                if (file::Exists(m_destination.GetName()))
+                {
+                    file::SetFileAttr(m_destination.GetName(), file::WRITE);
+                }
+
+                if (!file::Copy(m_source.GetName(), m_destination.GetName()))
+                {
+                    SetErrorString(system::GetLastErrorMessage() + "\n" + m_source.GetName() + "\n" + m_destination.GetName());
+                    return false;
+                }
+
+                return true;
             }
 
-            if (!file::Move(m_source.GetName(), m_destination.GetName()))
+        private:
+            FileInfo m_source;
+            FileInfo m_destination;
+        };
+
+        class CreateDirectoryAction : public ActionBase
+        {
+        public:
+            CreateDirectoryAction(const FileInfo& directory)
+                :ActionBase("Create Directory")
+                , m_directory(directory)
             {
-               SetErrorString(system::GetLastErrorMessage());
-               return false;
+            }
+            const FileInfo* GetSource() const override
+            {
+                return &m_directory;
+            }
+            const FileInfo* GetDestination() const override
+            {
+                return nullptr;
+            }
+            uint64_t GetBytesToSync() const override
+            {
+                return 1;
             }
 
-            return true;
-         }
-
-      private:
-         FileInfo m_source;
-         FileInfo m_destination;
-      };
-
-      class DeleteAction: public ActionBase
-      {
-      public:
-         DeleteAction(const FileInfo& file)
-            :ActionBase("Delete")
-            ,m_file(file)
-         {
-         }
-         virtual const FileInfo* GetSource() const
-         {
-            return &m_file;
-         }
-         virtual const FileInfo* GetDestination() const
-         {
-            return 0;
-         }
-         virtual uint64_t GetBytesToSync() const
-         {
-            return 1;
-         }
-
-         virtual bool Do()
-         {
-            file::SetFileAttr(m_file.GetName(), file::WRITE);
-            if (!file::Remove(m_file.GetName()))
+            bool Do() override
             {
-               SetErrorString(system::GetLastErrorMessage());
-               return false;
+                if (!file::CreateDirRecursive(m_directory.GetName()))
+                {
+                    SetErrorString(system::GetLastErrorMessage());
+                    return false;
+                }
+
+                return true;
             }
 
-            return true;
-         }
+        private:
+            FileInfo m_directory;
+        };
 
-      private:
-         FileInfo m_file;
-      };
+        class MoveAction : public ActionBase
+        {
+        public:
+            MoveAction(const FileInfo& source, const FileInfo& destination)
+                :ActionBase("Move")
+                , m_source(source)
+                , m_destination(destination)
+            {
+            }
+            const FileInfo* GetSource() const override
+            {
+                return &m_source;
+            }
+            const FileInfo* GetDestination() const override
+            {
+                return &m_destination;
+            }
+            uint64_t GetBytesToSync() const override
+            {
+                return 1;
+            }
 
-      ActionPtr CreateCopyAction(const FileInfo& source, const FileInfo& destination)
-      {
-         return ActionPtr(new CopyAction(source, destination));
-      }
-      ActionPtr CreateCreateDirectoryAction(const FileInfo& directory)
-      {
-         return ActionPtr(new CreateDirectoryAction(directory));
-      }
-      ActionPtr CreateMoveAction(const FileInfo& source, const FileInfo& destination)
-      {
-         return ActionPtr(new MoveAction(source, destination));
-      }
-      ActionPtr CreateDeleteAction(const FileInfo& file)
-      {
-         return ActionPtr(new DeleteAction(file));
-      }
+            bool Do() override
+            {
+                std::string dir_name = file_name::GetPath(m_destination.GetName());
+                if (!file::IsDirectory(dir_name) &&
+                    !file::CreateDirRecursive(dir_name))
+                {
+                    SetErrorString(system::GetLastErrorMessage());
+                    return false;
+                }
 
-   }
+                if (!file::Move(m_source.GetName(), m_destination.GetName()))
+                {
+                    SetErrorString(system::GetLastErrorMessage());
+                    return false;
+                }
+
+                return true;
+            }
+
+        private:
+            FileInfo m_source;
+            FileInfo m_destination;
+        };
+
+        class DeleteAction : public ActionBase
+        {
+        public:
+            DeleteAction(const FileInfo& file)
+                :ActionBase("Delete")
+                , m_file(file)
+            {
+            }
+            const FileInfo* GetSource() const override
+            {
+                return &m_file;
+            }
+            const FileInfo* GetDestination() const override
+            {
+                return nullptr;
+            }
+            uint64_t GetBytesToSync() const override
+            {
+                return 1;
+            }
+
+            bool Do() override
+            {
+                file::SetFileAttr(m_file.GetName(), file::WRITE);
+                if (!file::Remove(m_file.GetName()))
+                {
+                    SetErrorString(system::GetLastErrorMessage());
+                    return false;
+                }
+
+                return true;
+            }
+
+        private:
+            FileInfo m_file;
+        };
+
+        ActionPtr CreateCopyAction(const FileInfo& source, const FileInfo& destination)
+        {
+            return ActionPtr(new CopyAction(source, destination));
+        }
+        ActionPtr CreateCreateDirectoryAction(const FileInfo& directory)
+        {
+            return ActionPtr(new CreateDirectoryAction(directory));
+        }
+        ActionPtr CreateMoveAction(const FileInfo& source, const FileInfo& destination)
+        {
+            return ActionPtr(new MoveAction(source, destination));
+        }
+        ActionPtr CreateDeleteAction(const FileInfo& file)
+        {
+            return ActionPtr(new DeleteAction(file));
+        }
+
+    }
 }
