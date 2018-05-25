@@ -10,7 +10,7 @@
 //                        *
 //*******************************************************************************
 // see http://sourceforge.net/projects/tcsystem/ for details.
-// Copyright (C) 2003 - 2010 Thomas Goessler. All Rights Reserved. 
+// Copyright (C) 2003 - 2018 Thomas Goessler. All Rights Reserved. 
 //*******************************************************************************
 //
 // TCSystem is the legal property of its developers.
@@ -30,7 +30,7 @@
 // License along with this library; if not, write to the Free Software       
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 //*******************************************************************************
-//  $Id$
+//  $Id: TCFileSyncActions.h,v 5121974dd9eb 2012/09/17 19:34:55 thomas $
 //*******************************************************************************
 #ifndef _TC_FILE_SYNC_ACTIONS_H_
 #define _TC_FILE_SYNC_ACTIONS_H_

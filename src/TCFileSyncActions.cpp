@@ -10,7 +10,7 @@
 //                        *
 //*******************************************************************************
 // see http://sourceforge.net/projects/tcsystem/ for details.
-// Copyright (C) 2003 - 2010 Thomas Goessler. All Rights Reserved. 
+// Copyright (C) 2003 - 2018 Thomas Goessler. All Rights Reserved. 
 //*******************************************************************************
 //
 // TCSystem is the legal property of its developers.
@@ -116,7 +116,7 @@ namespace tc
 
             if (file::Exists(m_destination.GetName()))
             {
-               file::SetFileAttr(m_destination.GetName(), file::FILEATTR_WRITE);
+               file::SetFileAttr(m_destination.GetName(), file::WRITE);
             }
 
             if (!file::Copy(m_source.GetName(), m_destination.GetName()))
@@ -238,7 +238,7 @@ namespace tc
 
          virtual bool Do()
          {
-            file::SetFileAttr(m_file.GetName(), file::FILEATTR_WRITE);
+            file::SetFileAttr(m_file.GetName(), file::WRITE);
             if (!file::Remove(m_file.GetName()))
             {
                SetErrorString(system::GetLastErrorMessage());
