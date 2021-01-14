@@ -1,0 +1,3 @@
+[submodule "TCSystem"]
+	path = TCSystem
+	url = https://github.com/ThE-TiGeR/tcsystem.git
