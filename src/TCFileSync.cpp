@@ -14,11 +14,13 @@
 //*******************************************************************************
 
 #include "TCApplication.h"
+#include "TCFileName.h"
 #include "TCFileSyncSyncronizer.h"
 #include "TCFileSyncVersion.h"
 #include "TCOutput.h"
 #include "TCString.h"
-#include "TCFileName.h"
+#include "TCWString.h"
+#include "TCWFileName.h"
 #include "TCSystem.h"
 
 #include "TCNewEnable.h"
@@ -58,7 +60,7 @@ namespace tc::file_sync
 
          m_settings.info_mode = false;
          m_settings.calc_checksum = false;
-         m_settings.backup_folder = "_Older";
+         m_settings.backup_folder = L"_Older";
          m_settings.num_backups = 5;
       }
 
@@ -96,18 +98,18 @@ namespace tc::file_sync
          {
             if (*it == "--source" || *it == "-s")
             {
-               ++it;
-               m_settings.source = file_name::Simplify(*it);
+               auto val = wstring::ToString(*(++it));
+               m_settings.source = wfile_name::Simplify(val);
             }
             else if (*it == "--destination" || *it == "-d")
             {
-               ++it;
-               m_settings.destination = file_name::Simplify(*it);
+               auto val = wstring::ToString(*(++it));
+               m_settings.destination = wfile_name::Simplify(val);
             }
             else if (*it == "--backup_folder" || *it == "-b")
             {
-               ++it;
-               m_settings.backup_folder = file_name::Simplify(*it);
+               auto val = wstring::ToString(*(++it));
+               m_settings.backup_folder = wfile_name::Simplify(val);
             }
             else if (*it == "--num_backups" || *it == "-n")
             {
@@ -116,18 +118,18 @@ namespace tc::file_sync
             }
             else if (*it == "--skipp")
             {
-               ++it;
-               m_settings.folders_to_skipp.insert(*it);
+               auto val = wstring::ToString(*(++it));
+               m_settings.folders_to_skipp.insert(val);
             }
             else if (*it == "--skipp_ext")
             {
-               ++it;
-               m_settings.extensions_to_skipp.insert(*it);
+               auto val = wstring::ToString(*(++it));
+               m_settings.extensions_to_skipp.insert(val);
             }
             else if (*it == "--ext")
             {
-               ++it;
-               m_settings.extensions_to_search_for.insert(*it);
+               auto val = wstring::ToString(*(++it));
+               m_settings.extensions_to_search_for.insert(val);
             }
             else if (*it == "--info_only" || *it == "-i")
             {

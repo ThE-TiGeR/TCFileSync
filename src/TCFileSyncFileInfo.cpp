@@ -16,7 +16,7 @@
 #include "TCFileSyncFileInfo.h"
 
 #include "TCFactory.h"
-#include "TCFileName.h"
+#include "TCWFileName.h"
 #include "TCMathFactory.h"
 
 namespace tc::file_sync
@@ -45,9 +45,9 @@ namespace tc::file_sync
       return m_hash;
    }
 
-   std::string FileInfo::GetFullName() const
+   std::wstring FileInfo::GetFullName() const
    {
-      return file_name::AddFileNameAndPath(m_info.name, m_dir);
+      return wfile_name::AddFileNameAndPath(m_info.name, m_dir);
    }
 }
 

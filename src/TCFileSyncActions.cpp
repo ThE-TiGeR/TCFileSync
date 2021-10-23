@@ -17,13 +17,11 @@
 
 #include <utility>
 
-#include "TCFile.h"
-#include "TCFileName.h"
+#include "TCWFile.h"
+#include "TCWFileName.h"
 #include "TCFileSyncFileInfo.h"
 #include "TCSystem.h"
-#include "TCString.h"
-
-#include "TCNewEnable.h"
+#include "TCWString.h"
 
 namespace tc::file_sync
 {
@@ -31,30 +29,30 @@ namespace tc::file_sync
    class ActionBase : public Action
    {
    public:
-      ActionBase(std::string action_string)
+      ActionBase(std::wstring action_string)
          : m_action_string(std::move(action_string))
       {
       }
 
-      [[nodiscard]] const std::string& GetActionString() const override
+      [[nodiscard]] const std::wstring& GetActionString() const override
       {
          return m_action_string;
       }
 
-      [[nodiscard]] const std::string& GetErrorMessage() const override
+      [[nodiscard]] const std::wstring& GetErrorMessage() const override
       {
          return m_error;
       }
 
    protected:
-      void SetErrorString(const std::string& error)
+      void SetErrorString(const std::wstring& error)
       {
          m_error = error;
       }
 
    private:
-      std::string m_error;
-      std::string m_action_string;
+      std::wstring m_error;
+      std::wstring m_action_string;
    };
 
 
@@ -63,7 +61,7 @@ namespace tc::file_sync
    {
    public:
       CopyAction(FileInfo source, FileInfo destination)
-         :ActionBase("Copy")
+         :ActionBase(L"Copy")
           , m_source(std::move(source))
           , m_destination(std::move(destination))
       {
@@ -84,22 +82,22 @@ namespace tc::file_sync
 
       bool Do() override
       {
-         std::string dir_name = file_name::GetPath(m_destination.GetName());
-         if (!file::IsDirectory(dir_name) &&
-            !file::CreateDirRecursive(dir_name))
+         std::wstring dir_name = wfile_name::GetPath(m_destination.GetName());
+         if (!wfile::IsDirectory(dir_name) &&
+            !wfile::CreateDirRecursive(dir_name))
          {
-            SetErrorString(system::GetLastErrorMessage());
+            SetErrorString(wstring::ToString(system::GetLastErrorMessage()));
             return false;
          }
 
-         if (file::Exists(m_destination.GetName()))
+         if (wfile::Exists(m_destination.GetName()))
          {
-            file::SetFileAttr(m_destination.GetName(), file::WRITE);
+            wfile::SetFileAttr(m_destination.GetName(), wfile::WRITE);
          }
 
-         if (!file::Copy(m_source.GetName(), m_destination.GetName()))
+         if (!wfile::Copy(m_source.GetName(), m_destination.GetName()))
          {
-            SetErrorString(system::GetLastErrorMessage() + "\n" + m_source.GetName() + "\n" + m_destination.GetName());
+            SetErrorString(wstring::ToString(system::GetLastErrorMessage()) + L"\n" + m_source.GetName() + L"\n" + m_destination.GetName());
             return false;
          }
 
@@ -115,7 +113,7 @@ namespace tc::file_sync
    {
    public:
       CreateDirectoryAction(FileInfo directory)
-         :ActionBase("Create Directory")
+         :ActionBase(L"Create Directory")
           , m_directory(std::move(directory))
       {
       }
@@ -134,9 +132,9 @@ namespace tc::file_sync
 
       bool Do() override
       {
-         if (!file::CreateDirRecursive(m_directory.GetName()))
+         if (!wfile::CreateDirRecursive(m_directory.GetName()))
          {
-            SetErrorString(system::GetLastErrorMessage());
+            SetErrorString(wstring::ToString(system::GetLastErrorMessage()));
             return false;
          }
 
@@ -151,7 +149,7 @@ namespace tc::file_sync
    {
    public:
       MoveAction(FileInfo source, FileInfo destination)
-         :ActionBase("Move")
+         :ActionBase(L"Move")
           , m_source(std::move(source))
           , m_destination(std::move(destination))
       {
@@ -171,17 +169,17 @@ namespace tc::file_sync
 
       bool Do() override
       {
-         std::string dir_name = file_name::GetPath(m_destination.GetName());
-         if (!file::IsDirectory(dir_name) &&
-            !file::CreateDirRecursive(dir_name))
+         std::wstring dir_name = wfile_name::GetPath(m_destination.GetName());
+         if (!wfile::IsDirectory(dir_name) &&
+            !wfile::CreateDirRecursive(dir_name))
          {
-            SetErrorString(system::GetLastErrorMessage());
+            SetErrorString(wstring::ToString(system::GetLastErrorMessage()));
             return false;
          }
 
-         if (!file::Move(m_source.GetName(), m_destination.GetName()))
+         if (!wfile::Move(m_source.GetName(), m_destination.GetName()))
          {
-            SetErrorString(system::GetLastErrorMessage());
+            SetErrorString(wstring::ToString(system::GetLastErrorMessage()));
             return false;
          }
 
@@ -197,7 +195,7 @@ namespace tc::file_sync
    {
    public:
       DeleteAction(FileInfo file)
-         :ActionBase("Delete")
+         :ActionBase(L"Delete")
           , m_file(std::move(file))
       {
       }
@@ -216,10 +214,10 @@ namespace tc::file_sync
 
       bool Do() override
       {
-         file::SetFileAttr(m_file.GetName(), file::WRITE);
-         if (!file::Remove(m_file.GetName()))
+         wfile::SetFileAttr(m_file.GetName(), wfile::WRITE);
+         if (!wfile::Remove(m_file.GetName()))
          {
-            SetErrorString(system::GetLastErrorMessage());
+            SetErrorString(wstring::ToString(system::GetLastErrorMessage()));
             return false;
          }
 

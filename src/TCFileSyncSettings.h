@@ -26,15 +26,15 @@ namespace tc::file_sync
    public:
       bool info_mode{};
       bool calc_checksum{};
-      std::string source;
-      std::string destination;
+      std::wstring source;
+      std::wstring destination;
 
       uint32_t num_backups{};
-      std::string backup_folder;
+      std::wstring backup_folder;
 
-      std::set< std::string > folders_to_skipp;
-      std::set< std::string > extensions_to_search_for;
-      std::set< std::string > extensions_to_skipp;
+      std::set< std::wstring > folders_to_skipp;
+      std::set< std::wstring > extensions_to_search_for;
+      std::set< std::wstring > extensions_to_skipp;
    };
 }
 

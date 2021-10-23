@@ -25,12 +25,12 @@ namespace tc::file_sync
    class Action
    {
    public:
-      [[nodiscard]] virtual const std::string& GetActionString() const = 0;
+      [[nodiscard]] virtual const std::wstring& GetActionString() const = 0;
       [[nodiscard]] virtual const FileInfo* GetSource() const = 0;
       [[nodiscard]] virtual const FileInfo* GetDestination() const = 0;
       [[nodiscard]] virtual uint64_t GetBytesToSync() const = 0;
 
-      [[nodiscard]] virtual const std::string& GetErrorMessage() const = 0;
+      [[nodiscard]] virtual const std::wstring& GetErrorMessage() const = 0;
 
       virtual bool Do() = 0;
 

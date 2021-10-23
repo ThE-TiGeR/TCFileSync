@@ -39,7 +39,7 @@ namespace tc::file_sync
    private:
       bool FindSourceFiles();
       bool FindDestinationFiles();
-      bool FindRecursiveFiles(const std::string& directory, FileInfos& files);
+      bool FindRecursiveFiles(const std::wstring& directory, FileInfos& files);
 
       Settings m_settings;
       FileInfos m_files_source;

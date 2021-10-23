@@ -17,8 +17,8 @@
 
 #include <utility>
 
-#include "TCFile.h"
-#include "TCFileName.h"
+#include "TCWFile.h"
+#include "TCWFileName.h"
 #include "TCOutput.h"
 #include "TCSystem.h"
 
@@ -31,12 +31,12 @@ namespace tc
 
     bool file_sync::FileFinder::Find()
     {
-        std::string dir_save = file::GetDirectory();
+        std::wstring dir_save = wfile::GetDirectory();
 
         if (!FindSourceFiles()) return false;
         if (!FindDestinationFiles()) return false;
 
-        return file::ChangeDirectory(dir_save);
+        return wfile::ChangeDirectory(dir_save);
     }
 
     bool file_sync::FileFinder::FindSourceFiles()
@@ -44,8 +44,8 @@ namespace tc
         TCINFOS("FileSync::FileFinder", "Searching source files in " << m_settings.source << " ...");
 
         m_files_source.clear();
-        if (!file::ChangeDirectory(m_settings.source)) return false;
-        if (!FindRecursiveFiles(".", m_files_source)) return false;
+        if (!wfile::ChangeDirectory(m_settings.source)) return false;
+        if (!FindRecursiveFiles(L".", m_files_source)) return false;
 
         for (auto & file_info : m_files_source)
         {
@@ -67,8 +67,8 @@ namespace tc
         m_settings.folders_to_skipp.clear();
 
         m_files_destination.clear();
-        if (!file::ChangeDirectory(m_settings.destination)) return false;
-        if (!FindRecursiveFiles(".", m_files_destination)) return false;
+        if (!wfile::ChangeDirectory(m_settings.destination)) return false;
+        if (!FindRecursiveFiles(L".", m_files_destination)) return false;
 
         for (auto & file_info : m_files_destination)
         {
@@ -82,15 +82,15 @@ namespace tc
         return true;
     }
 
-    bool file_sync::FileFinder::FindRecursiveFiles(const std::string& search_dir, FileInfos& files)
+    bool file_sync::FileFinder::FindRecursiveFiles(const std::wstring& search_dir, FileInfos& files)
     {
-        std::vector<file::FileInfo> file_infos_of_dir;
-        file::GetFileInfosOfDirectory(file_infos_of_dir, search_dir);
+        std::vector<wfile::FileInfo> file_infos_of_dir;
+        wfile::GetFileInfosOfDirectory(file_infos_of_dir, search_dir);
 
         for (auto & file : file_infos_of_dir)
         {
             FileInfo file_info(file);
-            file_info.SetName(file_name::AddFileNameAndPath(file.name, search_dir));
+            file_info.SetName(wfile_name::AddFileNameAndPath(file.name, search_dir));
             if (file_info.IsDirectory())
             {
                 // check if we have to ignore this folder
@@ -109,7 +109,7 @@ namespace tc
                 // check if only some predefined extensions should be searched
                 if (!m_settings.extensions_to_search_for.empty())
                 {
-                    std::string ext = file_name::GetExtension(file_info.GetName());
+                    std::wstring ext = wfile_name::GetExtension(file_info.GetName());
                     if (m_settings.extensions_to_search_for.find(ext) ==
                         m_settings.extensions_to_search_for.end())
                     {
@@ -120,7 +120,7 @@ namespace tc
                 // check if we have to skipp some extensions
                 if (!m_settings.extensions_to_skipp.empty())
                 {
-                    std::string ext = file_name::GetExtension(file_info.GetName());
+                    std::wstring ext = wfile_name::GetExtension(file_info.GetName());
                     if (m_settings.extensions_to_skipp.find(ext) !=
                         m_settings.extensions_to_skipp.end())
                     {

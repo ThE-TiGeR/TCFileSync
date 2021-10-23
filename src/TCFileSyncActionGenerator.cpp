@@ -17,10 +17,10 @@
 
 #include <utility>
 
-#include "TCFile.h"
-#include "TCFileName.h"
+#include "TCWFile.h"
+#include "TCWFileName.h"
 #include "TCOutput.h"
-#include "TCString.h"
+#include "TCWString.h"
 
 namespace tc::file_sync
 {
@@ -30,7 +30,7 @@ namespace tc::file_sync
        , m_status_displayer(std::move(status_displayer))
    {
 
-      m_settings.backup_folder = file_name::AddFileNameAndPath(settings.backup_folder, settings.destination);
+      m_settings.backup_folder = wfile_name::AddFileNameAndPath(settings.backup_folder, settings.destination);
    }
 
    bool ActionGenerator::CreateActions()
@@ -136,33 +136,33 @@ namespace tc::file_sync
       for (const auto & missing_file : missing_files)
       {
          FileInfo dest_file_info = missing_file.second;
-         dest_file_info.SetName(file_name::AddFileNameAndPath(missing_file.second.GetName(), m_settings.destination));
+         dest_file_info.SetName(wfile_name::AddFileNameAndPath(missing_file.second.GetName(), m_settings.destination));
 
          if (!dest_file_info.IsDirectory())
          {
             FileInfo source_file_info = missing_file.second;
-            source_file_info.SetName(file_name::AddFileNameAndPath(missing_file.second.GetName(), m_settings.source));
+            source_file_info.SetName(wfile_name::AddFileNameAndPath(missing_file.second.GetName(), m_settings.source));
             m_actions.push_back(CreateCopyAction(source_file_info, dest_file_info));
          }
       }
    }
 
-   uint32_t ActionGenerator::CreateBackupActionsForFile(const std::string& source_file_name)
+   uint32_t ActionGenerator::CreateBackupActionsForFile(const std::wstring& source_file_name)
    {
-      std::string ext = file_name::GetExtension(source_file_name);
-      std::string file_name = file_name::RemoveExtension(source_file_name);
-      std::string path = file_name::GetPath(source_file_name);
+      std::wstring ext = wfile_name::GetExtension(source_file_name);
+      std::wstring file_name = wfile_name::RemoveExtension(source_file_name);
+      std::wstring path = wfile_name::GetPath(source_file_name);
 
       uint32_t backup_id = 1;
       Actions actions;
       for (uint32_t file_idx = m_settings.num_backups; file_idx > 0; file_idx--)
       {
-         std::string backup_id1 = "$" + string::ToString(file_idx) + "$";
-         std::string file_name1 = file_name::AddFileNameAndExtension(file_name, backup_id1);
-         file_name1 = file_name::AddFileNameAndExtension(file_name1, ext);
-         file_name1 = file_name::AddFileNameAndPath(file_name1, m_settings.backup_folder);
+         std::wstring backup_id1 = L"$" + wstring::ToString(file_idx) + L"$";
+         std::wstring file_name1 = wfile_name::AddFileNameAndExtension(file_name, backup_id1);
+         file_name1 = wfile_name::AddFileNameAndExtension(file_name1, ext);
+         file_name1 = wfile_name::AddFileNameAndPath(file_name1, m_settings.backup_folder);
          // if file does not exist nothing needs to be done
-         if (!file::Exists(file_name1))
+         if (!wfile::Exists(file_name1))
          {
             continue;
          }
@@ -182,10 +182,10 @@ namespace tc::file_sync
 
          if (file_idx == 1) continue;
 
-         std::string backup_id2 = "$" + string::ToString(file_idx - 1) + "$";
-         std::string file_name2 = file_name::AddFileNameAndExtension(file_name, backup_id2);
-         file_name2 = file_name::AddFileNameAndExtension(file_name2, ext);
-         file_name2 = file_name::AddFileNameAndPath(file_name2, m_settings.backup_folder);
+         std::wstring backup_id2 = L"$" + wstring::ToString(file_idx - 1) + L"$";
+         std::wstring file_name2 = wfile_name::AddFileNameAndExtension(file_name, backup_id2);
+         file_name2 = wfile_name::AddFileNameAndExtension(file_name2, ext);
+         file_name2 = wfile_name::AddFileNameAndPath(file_name2, m_settings.backup_folder);
 
          FileInfo file_info1;
          file_info1.SetName(file_name1);
@@ -204,23 +204,23 @@ namespace tc::file_sync
       for (const auto & modified_file : modified_files)
       {
          FileInfo source_file_info = modified_file.second;
-         source_file_info.SetName(file_name::AddFileNameAndPath(modified_file.second.GetName(), m_settings.source));
+         source_file_info.SetName(wfile_name::AddFileNameAndPath(modified_file.second.GetName(), m_settings.source));
 
          FileInfo dest_file_info = modified_file.second;
-         dest_file_info.SetName(file_name::AddFileNameAndPath(modified_file.second.GetName(), m_settings.destination));
+         dest_file_info.SetName(wfile_name::AddFileNameAndPath(modified_file.second.GetName(), m_settings.destination));
 
          if (m_settings.num_backups > 0)
          {
             uint32_t backup_id = CreateBackupActionsForFile(modified_file.second.GetName());
 
-            std::string ext = file_name::GetExtension(modified_file.second.GetName());
-            std::string file_name = file_name::RemoveExtension(modified_file.second.GetName());
-            std::string backup_name = "$" + string::ToString(backup_id) + "$";
-            file_name = file_name::AddFileNameAndExtension(file_name, backup_name);
-            file_name = file_name::AddFileNameAndExtension(file_name, ext);
+            std::wstring ext = wfile_name::GetExtension(modified_file.second.GetName());
+            std::wstring file_name = wfile_name::RemoveExtension(modified_file.second.GetName());
+            std::wstring backup_name = L"$" + wstring::ToString(backup_id) + L"$";
+            file_name = wfile_name::AddFileNameAndExtension(file_name, backup_name);
+            file_name = wfile_name::AddFileNameAndExtension(file_name, ext);
 
             FileInfo move_file_info = modified_file.second;
-            move_file_info.SetName(file_name::AddFileNameAndPath(file_name, m_settings.backup_folder));
+            move_file_info.SetName(wfile_name::AddFileNameAndPath(file_name, m_settings.backup_folder));
 
             m_actions.push_back(CreateMoveAction(dest_file_info, move_file_info));
          }
@@ -235,7 +235,7 @@ namespace tc::file_sync
       for (file_info_it = deleted_files.rbegin(); file_info_it != deleted_files.rend(); file_info_it++)
       {
          FileInfo source_file_info = file_info_it->second;
-         source_file_info.SetName(file_name::AddFileNameAndPath(file_info_it->second.GetName(), m_settings.destination));
+         source_file_info.SetName(wfile_name::AddFileNameAndPath(file_info_it->second.GetName(), m_settings.destination));
 
          if (file_info_it->second.IsDirectory() || m_settings.num_backups == 0)
          {
@@ -245,14 +245,14 @@ namespace tc::file_sync
          {
             uint32_t backup_id = CreateBackupActionsForFile(file_info_it->second.GetName());
 
-            std::string ext = file_name::GetExtension(file_info_it->second.GetName());
-            std::string file_name = file_name::RemoveExtension(file_info_it->second.GetName());
-            std::string backup_name = "$" + string::ToString(backup_id) + "$";
-            file_name = file_name::AddFileNameAndExtension(file_name, backup_name);
-            file_name = file_name::AddFileNameAndExtension(file_name, ext);
+            std::wstring ext = wfile_name::GetExtension(file_info_it->second.GetName());
+            std::wstring file_name = wfile_name::RemoveExtension(file_info_it->second.GetName());
+            std::wstring backup_name = L"$" + wstring::ToString(backup_id) + L"$";
+            file_name = wfile_name::AddFileNameAndExtension(file_name, backup_name);
+            file_name = wfile_name::AddFileNameAndExtension(file_name, ext);
 
             FileInfo dest_file_info = file_info_it->second;
-            dest_file_info.SetName(file_name::AddFileNameAndPath(file_name, m_settings.backup_folder));
+            dest_file_info.SetName(wfile_name::AddFileNameAndPath(file_name, m_settings.backup_folder));
             m_actions.push_back(CreateMoveAction(source_file_info, dest_file_info));
          }
       }

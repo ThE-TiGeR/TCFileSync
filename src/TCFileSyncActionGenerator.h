@@ -37,7 +37,7 @@ namespace tc::file_sync
       void CreateModifiedFileActions(const FileInfos& modified_files);
       void CreateDeletedFileActions(const FileInfos& deleted_files);
 
-      uint32_t CreateBackupActionsForFile(const std::string& source_file_name);
+      uint32_t CreateBackupActionsForFile(const std::wstring& source_file_name);
 
    private:
       FileFinder m_file_finder;
