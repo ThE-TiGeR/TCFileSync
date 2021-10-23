@@ -30,4 +30,4 @@ jobs:
 
       - name: Compile
         run: |
-          cmake --config Release --build build
+          cmake --build build --config Release 
