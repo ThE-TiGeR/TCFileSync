@@ -1,0 +1,32 @@
+name: Build with CMake
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+    branches: [master]
+
+jobs:
+  build:
+    name: Build
+    runs-on: windows-latest
+    steps:
+      - name: Install CMake
+        run: |
+          choco install cmake
+          cmake --version
+
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+            fetch-depth: '0'
+
+      - name: Configure
+        run: |
+          mkdir build
+          cmake -G "Visual Studio 16 2019" -A "x64" -DBUILD_SHARED_LIBS=true -b build .
+
+
+      - name: Compile
+        run: |
+          cmake --config Release --build build

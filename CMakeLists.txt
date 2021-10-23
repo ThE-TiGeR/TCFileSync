@@ -59,6 +59,7 @@ set (FILES
 	src/TCFileSyncSyncronizer.h
 	src/TCFileSyncVersion.h.in
     ${PROJECT_BINARY_DIR}/TCFileSyncVersion.h
+	.github/workflows/build.yml
 )
 
 add_executable(TCFileSync ${FILES})
