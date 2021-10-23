@@ -24,7 +24,7 @@ jobs:
       - name: Configure
         run: |
           mkdir build
-          cmake -G "Visual Studio 16 2019" -A "x64" -DBUILD_SHARED_LIBS=true -b build .
+          cmake -G "Visual Studio 16 2019" -A "x64" -DBUILD_SHARED_LIBS=true -B build
 
 
       - name: Compile
