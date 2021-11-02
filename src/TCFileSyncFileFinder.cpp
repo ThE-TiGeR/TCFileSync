@@ -64,7 +64,7 @@ namespace tc
         file_sync::Settings settings = m_settings;
         m_settings.extensions_to_search_for.clear();
         m_settings.extensions_to_skipp.clear();
-        m_settings.folders_to_skipp.clear();
+        m_settings.files_and_folders_to_skipp.clear();
 
         m_files_destination.clear();
         if (!wfile::ChangeDirectory(m_settings.destination)) return false;
@@ -91,11 +91,15 @@ namespace tc
         {
             FileInfo file_info(file);
             file_info.SetName(wfile_name::AddFileNameAndPath(file.name, search_dir));
+            if (m_settings.files_and_folders_to_skipp.find(file.name) != m_settings.files_and_folders_to_skipp.end())
+            {
+               continue;
+            }
+
             if (file_info.IsDirectory())
             {
                 // check if we have to ignore this folder
-                if (m_settings.folders_to_skipp.find(file.name) == m_settings.folders_to_skipp.end() &&
-                    file.name != m_settings.backup_folder)
+                if (file.name != m_settings.backup_folder)
                 {
                     FindRecursiveFiles(file_info.GetName(), files);
                 }

@@ -119,7 +119,7 @@ namespace tc::file_sync
             else if (*it == "--skipp")
             {
                auto val = wstring::ToString(*(++it));
-               m_settings.folders_to_skipp.insert(val);
+               m_settings.files_and_folders_to_skipp.insert(val);
             }
             else if (*it == "--skipp_ext")
             {

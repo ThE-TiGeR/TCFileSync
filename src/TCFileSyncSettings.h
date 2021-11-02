@@ -32,7 +32,7 @@ namespace tc::file_sync
       uint32_t num_backups{};
       std::wstring backup_folder;
 
-      std::set< std::wstring > folders_to_skipp;
+      std::set< std::wstring > files_and_folders_to_skipp;
       std::set< std::wstring > extensions_to_search_for;
       std::set< std::wstring > extensions_to_skipp;
    };
