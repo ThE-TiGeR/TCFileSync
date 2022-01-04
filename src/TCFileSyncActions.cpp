@@ -86,13 +86,16 @@ namespace tc::file_sync
          if (!wfile::IsDirectory(dir_name) &&
             !wfile::CreateDirRecursive(dir_name))
          {
-            SetErrorString(wstring::ToString(system::GetLastErrorMessage()));
+            SetErrorString(wstring::ToString(system::GetLastErrorMessage()) + L"\n Failed create directory. " + dir_name);
             return false;
          }
 
          if (wfile::Exists(m_destination.GetName()))
          {
-            wfile::SetFileAttr(m_destination.GetName(), wfile::WRITE);
+            if (!wfile::SetFileAttr(m_destination.GetName(), wfile::WRITE))
+            {
+               SetErrorString(wstring::ToString(system::GetLastErrorMessage()) + L"\n Set writable failed. " + m_destination.GetName());
+            }
          }
 
          if (!wfile::Copy(m_source.GetName(), m_destination.GetName()))
@@ -134,7 +137,7 @@ namespace tc::file_sync
       {
          if (!wfile::CreateDirRecursive(m_directory.GetName()))
          {
-            SetErrorString(wstring::ToString(system::GetLastErrorMessage()));
+            SetErrorString(wstring::ToString(system::GetLastErrorMessage()) + L"\n" + m_directory.GetName());
             return false;
          }
 
@@ -173,13 +176,13 @@ namespace tc::file_sync
          if (!wfile::IsDirectory(dir_name) &&
             !wfile::CreateDirRecursive(dir_name))
          {
-            SetErrorString(wstring::ToString(system::GetLastErrorMessage()));
+            SetErrorString(wstring::ToString(system::GetLastErrorMessage()) + L"\n Failed create directory. " + dir_name);
             return false;
          }
 
          if (!wfile::Move(m_source.GetName(), m_destination.GetName()))
          {
-            SetErrorString(wstring::ToString(system::GetLastErrorMessage()));
+            SetErrorString(wstring::ToString(system::GetLastErrorMessage()) + L"\n" + m_source.GetName() + L"\n" + m_destination.GetName());
             return false;
          }
 
@@ -217,7 +220,7 @@ namespace tc::file_sync
          wfile::SetFileAttr(m_file.GetName(), wfile::WRITE);
          if (!wfile::Remove(m_file.GetName()))
          {
-            SetErrorString(wstring::ToString(system::GetLastErrorMessage()));
+            SetErrorString(wstring::ToString(system::GetLastErrorMessage()) + L"\n" + m_file.GetName());
             return false;
          }
 

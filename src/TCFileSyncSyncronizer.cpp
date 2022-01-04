@@ -58,7 +58,7 @@ namespace tc::file_sync
          {
             if (!action->Do())
             {
-               TCERRORS("FileSync", "-----------" << action->GetErrorMessage() << "-----------");
+               TCERRORS("FileSync", "------------ " << action->GetActionString() << " failed ---------------" << endl << action->GetErrorMessage());
                continue;
             }
          }

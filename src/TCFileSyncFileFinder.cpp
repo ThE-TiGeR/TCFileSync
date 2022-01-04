@@ -31,7 +31,7 @@ namespace tc
 
     bool file_sync::FileFinder::Find()
     {
-        std::wstring dir_save = wfile::GetDirectory();
+       const std::wstring dir_save = wfile::GetDirectory();
 
         if (!FindSourceFiles()) return false;
         if (!FindDestinationFiles()) return false;
@@ -43,6 +43,9 @@ namespace tc
     {
         TCINFOS("FileSync::FileFinder", "Searching source files in " << m_settings.source << " ...");
 
+        const file_sync::Settings settings = m_settings;
+        m_settings.destination_files_and_folders_to_ignore.clear();
+
         m_files_source.clear();
         if (!wfile::ChangeDirectory(m_settings.source)) return false;
         if (!FindRecursiveFiles(L".", m_files_source)) return false;
@@ -52,6 +55,7 @@ namespace tc
             file_info.second.SetDir(m_settings.source);
         }
 
+        m_settings = settings;
         TCINFOS("FileSync::FileFinder", "Found " << m_files_source.size() << " source files in " << m_settings.source);
         return true;
     }
@@ -61,7 +65,7 @@ namespace tc
         TCINFOS("FileSync::FileFinder", "Searching destination files in " << m_settings.destination << " ...");
 
         // reset setting for destination search because we have to find all
-        file_sync::Settings settings = m_settings;
+        const file_sync::Settings settings = m_settings;
         m_settings.extensions_to_search_for.clear();
         m_settings.extensions_to_skipp.clear();
         m_settings.files_and_folders_to_skipp.clear();
@@ -93,6 +97,11 @@ namespace tc
             file_info.SetName(wfile_name::AddFileNameAndPath(file.name, search_dir));
             if (m_settings.files_and_folders_to_skipp.find(file.name) != m_settings.files_and_folders_to_skipp.end())
             {
+               continue;
+            }
+            if (m_settings.destination_files_and_folders_to_ignore.find(file.name) != m_settings.destination_files_and_folders_to_ignore.end())
+            {
+               TCINFOS("FileSync::FileFinder", "Ignoring " << file_info.GetFullName());
                continue;
             }
 

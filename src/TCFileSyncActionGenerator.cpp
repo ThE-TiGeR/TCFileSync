@@ -135,14 +135,18 @@ namespace tc::file_sync
    {
       for (const auto & missing_file : missing_files)
       {
+         FileInfo source_file_info = missing_file.second;
          FileInfo dest_file_info = missing_file.second;
          dest_file_info.SetName(wfile_name::AddFileNameAndPath(missing_file.second.GetName(), m_settings.destination));
 
-         if (!dest_file_info.IsDirectory())
+         if (!source_file_info.IsDirectory())
          {
-            FileInfo source_file_info = missing_file.second;
             source_file_info.SetName(wfile_name::AddFileNameAndPath(missing_file.second.GetName(), m_settings.source));
             m_actions.push_back(CreateCopyAction(source_file_info, dest_file_info));
+         }
+         else if (m_settings.create_directories)
+         {
+            m_actions.push_back(CreateCreateDirectoryAction(dest_file_info));
          }
       }
    }

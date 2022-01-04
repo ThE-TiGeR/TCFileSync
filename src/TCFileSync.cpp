@@ -126,6 +126,11 @@ namespace tc::file_sync
                auto val = wstring::ToString(*(++it));
                m_settings.extensions_to_skipp.insert(val);
             }
+            else if (*it == "--ignore_dest")
+            {
+               auto val = wstring::ToString(*(++it));
+               m_settings.destination_files_and_folders_to_ignore.insert(val);
+            }
             else if (*it == "--ext")
             {
                auto val = wstring::ToString(*(++it));
@@ -138,6 +143,10 @@ namespace tc::file_sync
             else if (*it == "--calc_checksum" || *it == "-c")
             {
                m_settings.calc_checksum = true;
+            }
+            else if (*it == "--empty_directories")
+            {
+               m_settings.create_directories = true;
             }
             else
             {
@@ -167,7 +176,9 @@ namespace tc::file_sync
             "                             default = 5\n"
             "       --ext                 use only files with specified extension during synchronization, can be set more than once\n"
             "       --skip                folder name to skip during synchronization, can be set more than once\n"
-            "       --skip_ext            skip filenames with specified extension during synchronization, can be set more than once\n";
+            "       --skip_ext            skip filenames with specified extension during synchronization, can be set more than once\n"
+            "       --ignore_dest         do not delete existing destination files or directories\n"
+            "       --empty_directories   create also empty directories\n";
       }
 
    private:
