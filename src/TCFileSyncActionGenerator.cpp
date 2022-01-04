@@ -38,14 +38,14 @@ namespace tc::file_sync
       if (!m_file_finder.Find()) return false;
 
       TCINFOS("FileSync", "Finding missing destination files ...");
-      FileInfos missing_files = GetDifference(m_file_finder.GetSourceFiles(), m_file_finder.GetDestinationFiles());
+      const FileInfos missing_files = GetDifference(m_file_finder.GetSourceFiles(), m_file_finder.GetDestinationFiles());
       TCINFOS("FileSync", "Found " << missing_files.size() << " missing destination files.");
 
       TCINFOS("FileSync", "Finding deleted source files ...");
-      FileInfos deleted_files = GetDifference(m_file_finder.GetDestinationFiles(), m_file_finder.GetSourceFiles());
+      const FileInfos deleted_files = GetDifference(m_file_finder.GetDestinationFiles(), m_file_finder.GetSourceFiles());
       TCINFOS("FileSync", "Found " << deleted_files.size() << " deleted source files.");
 
-      FileInfos modified_files = GetModifiedFiles(m_file_finder.GetSourceFiles(), m_file_finder.GetDestinationFiles());
+      const FileInfos modified_files = GetModifiedFiles(m_file_finder.GetSourceFiles(), m_file_finder.GetDestinationFiles());
 
       CreateMissingFileActions(missing_files);
       CreateDeletedFileActions(deleted_files);

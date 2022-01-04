@@ -33,7 +33,7 @@ namespace tc::file_sync
    {
    public:
       MTTraceTarget()
-      = default;
+         = default;
 
       void Print(const char* text) override
       {
@@ -48,7 +48,7 @@ namespace tc::file_sync
       {
          s_out = factory::CreateStdOutStream();
 
-         output::PrintTargetPtr trace_target(new MTTraceTarget);
+         const output::PrintTargetPtr trace_target(new MTTraceTarget);
          output::SetErrorTarget(trace_target);
          output::SetWarningTarget(trace_target);
          output::SetInfoTarget(trace_target);
@@ -76,13 +76,13 @@ namespace tc::file_sync
 
       [[nodiscard]] bool Run() const
       {
-         Syncronizer syncronicer(m_settings, StatusDisplayerPtr());
-         if (!syncronicer.SetupSyncronisationData())
+         Syncronizer synchronizer(m_settings, StatusDisplayerPtr());
+         if (!synchronizer.SetupSyncronisationData())
          {
             TCERRORS("FileSync", "Failed setting up synchronization data");
             return false;
          }
-         if (!syncronicer.SyncDestination())
+         if (!synchronizer.SyncDestination())
          {
             TCERRORS("FileSync", "Failed syncing directories");
             return false;
@@ -176,7 +176,7 @@ namespace tc::file_sync
             "                             default = 5\n"
             "       --ext                 use only files with specified extension during synchronization, can be set more than once\n"
             "       --skip                folder name to skip during synchronization, can be set more than once\n"
-            "       --skip_ext            skip filenames with specified extension during synchronization, can be set more than once\n"
+            "       --skip_ext            skip file names with specified extension during synchronization, can be set more than once\n"
             "       --ignore_dest         do not delete existing destination files or directories\n"
             "       --empty_directories   create also empty directories\n";
       }
@@ -189,19 +189,19 @@ namespace tc::file_sync
 
 int main(int narg, char** argv)
 {
-    {
-        std::shared_ptr<tc::file_sync::FileSyncApplication> app(new tc::file_sync::FileSyncApplication);
-        if (!app->Init(narg, argv, PROGRAM_NAME, PROGRAM_VERSION_STR, PROGRAM_COMPANY))
-        {
-            return 1;
-        }
+   {
+      const std::shared_ptr<tc::file_sync::FileSyncApplication> app(new tc::file_sync::FileSyncApplication);
+      if (!app->Init(narg, argv, PROGRAM_NAME, PROGRAM_VERSION_STR, PROGRAM_COMPANY))
+      {
+         return 1;
+      }
 
-        if (!app->Run())
-        {
-            return 2;
-        }
-    }
+      if (!app->Run())
+      {
+         return 2;
+      }
+   }
 
-    return 0;
+   return 0;
 }
 

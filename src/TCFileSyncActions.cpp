@@ -82,7 +82,7 @@ namespace tc::file_sync
 
       bool Do() override
       {
-         std::wstring dir_name = wfile_name::GetPath(m_destination.GetName());
+         const std::wstring dir_name = wfile_name::GetPath(m_destination.GetName());
          if (!wfile::IsDirectory(dir_name) &&
             !wfile::CreateDirRecursive(dir_name))
          {
@@ -172,7 +172,7 @@ namespace tc::file_sync
 
       bool Do() override
       {
-         std::wstring dir_name = wfile_name::GetPath(m_destination.GetName());
+         const std::wstring dir_name = wfile_name::GetPath(m_destination.GetName());
          if (!wfile::IsDirectory(dir_name) &&
             !wfile::CreateDirRecursive(dir_name))
          {
